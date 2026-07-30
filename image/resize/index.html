@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Image Resizer — Batch Resize By Pixels Or Percentage | ToolBox</title>
+  <meta name="description" content="Resize JPG, PNG and WebP images by exact pixels or by percentage, one file or a whole batch, with aspect-ratio lock and social presets. Runs entirely in your browser."/>
+  <link rel="canonical" href="./"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Image Resizer — batch, pixels or percentage"/>
+  <meta property="og:description" content="Resize images in your browser with aspect-ratio lock and high-quality downscaling. No uploads."/>
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <script src="../../js/theme.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="logo" aria-label="ToolBox home">
+      <span class="logo-icon"><img src="../../assets/logo-icon.svg" alt="" width="16" height="16"/></span>
+      ToolBox
+    </a>
+    <div class="nav-links">
+      <a href="../../index.html#image" class="active">Image</a>
+      <a href="../../index.html#pdf">PDF</a>
+      <a href="../../index.html#text">Text</a>
+      <a href="../../index.html#calculators">Calculators</a>
+      <a href="../../index.html#developer">Developer</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrapper container" id="main">
+  <header class="tool-page-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a> <span class="breadcrumb-sep">/</span>
+      <a href="../../index.html#image">Image Tools</a> <span class="breadcrumb-sep">/</span>
+      <span aria-current="page">Image Resizer</span>
+    </nav>
+    <h1 class="tool-page-title">Image Resizer</h1>
+    <p class="tool-page-desc">Resize to exact pixel dimensions or by percentage — one image or a whole batch at once — with aspect-ratio lock, social presets and high-quality downscaling.</p>
+    <div class="tool-badges">
+      <span class="badge">Batch resize</span>
+      <span class="badge">Pixels or percentage</span>
+      <span class="badge">Runs on your device</span>
+    </div>
+  </header>
+
+  <div class="tool-panel">
+    <div class="drop-zone" id="dropZone" aria-label="Choose images to resize">
+      <svg class="drop-zone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+      <p class="drop-zone-text">Drop images here, or click to choose</p>
+      <p class="drop-zone-sub">JPG, PNG, WebP · multiple files · paste from clipboard works too</p>
+      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple/>
+    </div>
+
+    <div id="workspace" hidden>
+      <div class="panel-split" style="margin-top:22px">
+        <div>
+          <p class="panel-title">Dimensions</p>
+
+          <div class="segmented" style="margin-bottom:16px" role="group" aria-label="Resize mode">
+            <button id="modePixels" data-mode="px" aria-pressed="true">Pixels</button>
+            <button id="modePercent" data-mode="pct" aria-pressed="false">Percentage</button>
+          </div>
+
+          <div id="pixelGroup">
+            <div class="grid-2">
+              <div class="input-group">
+                <label class="input-label" for="widthInput">Width</label>
+                <div class="input-suffix">
+                  <input type="number" class="input-field" id="widthInput" min="1" max="20000" step="any"/>
+                  <span class="suffix">px</span>
+                </div>
+              </div>
+              <div class="input-group">
+                <label class="input-label" for="heightInput">Height</label>
+                <div class="input-suffix">
+                  <input type="number" class="input-field" id="heightInput" min="1" max="20000" step="any"/>
+                  <span class="suffix">px</span>
+                </div>
+              </div>
+            </div>
+            <p class="input-hint" id="pixelHint">With aspect ratio locked, each image keeps its own proportions and matches the width.</p>
+          </div>
+
+          <div id="percentGroup" hidden>
+            <div class="input-group">
+              <label class="input-label" for="percentRange">Scale</label>
+              <div class="range-wrap">
+                <input type="range" id="percentRange" min="5" max="200" step="5" value="50"/>
+                <span class="range-val" id="percentVal">50%</span>
+              </div>
+              <p class="input-hint">Applied to each image's own size, so a mixed batch scales proportionally.</p>
+            </div>
+          </div>
+
+          <label class="check-row" for="aspectLock">
+            <input type="checkbox" id="aspectLock" checked/> Lock aspect ratio
+          </label>
+          <label class="check-row" for="noUpscale">
+            <input type="checkbox" id="noUpscale" checked/> Never enlarge beyond the original
+          </label>
+
+          <div class="input-group" style="margin-top:14px">
+            <p class="input-label">Presets</p>
+            <div class="btn-group">
+              <button class="btn btn-secondary btn-sm" data-preset="1920">1920 wide</button>
+              <button class="btn btn-secondary btn-sm" data-preset="1080">1080 wide</button>
+              <button class="btn btn-secondary btn-sm" data-preset="800">800 wide</button>
+              <button class="btn btn-secondary btn-sm" data-preset="400">400 wide</button>
+              <button class="btn btn-secondary btn-sm" data-preset="original">Original</button>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="formatSelect">Output format</label>
+            <select class="input-field" id="formatSelect">
+              <option value="auto">Same as original</option>
+              <option value="image/jpeg">JPEG</option>
+              <option value="image/png">PNG</option>
+              <option value="image/webp">WebP</option>
+            </select>
+          </div>
+
+          <div class="input-group" id="qualityGroup">
+            <label class="input-label" for="qualityRange">Quality</label>
+            <div class="range-wrap">
+              <input type="range" id="qualityRange" min="30" max="100" value="92"/>
+              <span class="range-val" id="qualityVal">92%</span>
+            </div>
+          </div>
+
+          <div class="btn-group" style="margin-top:8px">
+            <button class="btn btn-primary" id="applyBtn">Resize</button>
+            <button class="btn btn-secondary" id="addMoreBtn">Add files</button>
+            <button class="btn btn-ghost btn-sm" id="resetBtn">Clear all</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="stat-cards" style="margin-bottom:16px">
+            <div class="stat-card"><div class="stat-card-val" id="origDims">–</div><div class="stat-card-label">Original</div></div>
+            <div class="stat-card"><div class="stat-card-val" id="outDims">–</div><div class="stat-card-label">Resized</div></div>
+            <div class="stat-card"><div class="stat-card-val" id="totalOrig">–</div><div class="stat-card-label">Size before</div></div>
+            <div class="stat-card highlight"><div class="stat-card-val good" id="totalNew">–</div><div class="stat-card-label">Size after</div></div>
+          </div>
+
+          <div id="resultSection" hidden>
+            <div class="preview-frame"><img id="previewImg" alt="Resized image preview"/></div>
+          </div>
+          <div class="empty-state" id="emptyState">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m21 15-5-5-11 11"/></svg>
+            <p>Set your dimensions, then press “Resize”.</p>
+          </div>
+
+          <p class="panel-title" style="margin-top:18px">Files (<span id="fileCount">0</span>)</p>
+          <ul class="file-list" id="fileList"></ul>
+
+          <div class="btn-group" style="margin-top:14px">
+            <button class="btn btn-success" id="downloadAllBtn" disabled>Download</button>
+          </div>
+          <p class="input-hint">Two or more files are saved as a single ZIP.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="related" data-tool="img-resize"></div>
+
+  <section class="faq-section">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <button class="faq-q">Will resizing blur my image?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Making an image smaller keeps it sharp — this tool uses the browser's high-quality smoothing when downscaling. Making an image larger cannot invent detail that was never captured, so anything above 100% looks softer. That is why “never enlarge beyond the original” is on by default.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">How does batch resizing handle images of different sizes?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>With aspect ratio locked, every image is matched to your target width and its own height is derived from its own proportions — so portraits and landscapes both come out undistorted. Percentage mode scales each image relative to its own dimensions.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What does “lock aspect ratio” do?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>It keeps the original width-to-height proportion, so typing a width fills in the matching height and the picture never looks stretched. Uncheck it if you deliberately need exact non-proportional dimensions.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Are my images uploaded?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>No. The resize happens on an HTML5 canvas inside your browser, so the files never leave your device.</div></div>
+    </div>
+  </section>
+</div>
+
+<footer data-auto></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image Resizer","applicationCategory":"MultimediaApplication","operatingSystem":"Any browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Batch resize images by pixels or percentage in the browser with aspect-ratio lock."}
+</script>
+
+<script src="../../js/tools-core.js"></script>
+<script src="../../js/main.js"></script>
+<script src="../../js/image-batch.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const widthInput = $('widthInput'), heightInput = $('heightInput');
+  const aspectLock = $('aspectLock'), percentRange = $('percentRange');
+  const formatSelect = $('formatSelect'), qualityRange = $('qualityRange');
+  let mode = 'px';
+  let previewUrl = null;
+
+  const queue = createImageQueue({
+    listEl: $('fileList'),
+    countEl: $('fileCount'),
+    accept: ['image/jpeg', 'image/png', 'image/webp'],
+    processBtn: $('applyBtn'),
+    downloadAllBtn: $('downloadAllBtn'),
+    busyLabel: 'Resizing…',
+    zipName: 'resized-images.zip',
+    statEls: { orig: $('totalOrig'), out: $('totalNew') },
+    process: resizeItem,
+    onSelect: showPreview,
+    onChange: (q) => {
+      $('workspace').hidden = q.items.length === 0;
+      if (!q.items.length) {
+        $('resultSection').hidden = true;
+        $('emptyState').hidden = false;
+        $('origDims').textContent = '–';
+        $('outDims').textContent = '–';
+        $('dropZone').querySelector('.drop-zone-text').textContent = 'Drop images here, or click to choose';
+      }
+    }
+  });
+
+  initDropZone($('dropZone'), $('fileInput'), async (files) => {
+    const before = queue.items.length;
+    if (!(await queue.add(files))) return;
+    $('workspace').hidden = false;
+    $('dropZone').querySelector('.drop-zone-text').textContent = 'Drop more images here';
+    // Seed the inputs from the first image added.
+    if (!before && queue.items[0]) {
+      widthInput.value = queue.items[0].img.naturalWidth;
+      heightInput.value = queue.items[0].img.naturalHeight;
+    }
+    updateOrigDims();
+    queue.render();
+  });
+  $('addMoreBtn').addEventListener('click', () => $('fileInput').click());
+
+  function updateOrigDims() {
+    const item = queue.selected;
+    $('origDims').textContent = item ? item.img.naturalWidth + '×' + item.img.naturalHeight : '–';
+  }
+
+  /* mode switch */
+  document.querySelectorAll('.segmented [data-mode]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      mode = btn.dataset.mode;
+      document.querySelectorAll('.segmented [data-mode]').forEach((b) =>
+        b.setAttribute('aria-pressed', String(b === btn)));
+      $('pixelGroup').hidden = mode !== 'px';
+      $('percentGroup').hidden = mode !== 'pct';
+    });
+  });
+
+  /* aspect ratio, driven by the selected image's proportions */
+  function ratio() {
+    const item = queue.selected;
+    return item ? item.img.naturalHeight / item.img.naturalWidth : 1;
+  }
+  widthInput.addEventListener('input', () => {
+    if (!aspectLock.checked || !queue.selected) return;
+    heightInput.value = Math.max(1, Math.round((+widthInput.value || 0) * ratio()));
+  });
+  heightInput.addEventListener('input', () => {
+    if (!aspectLock.checked || !queue.selected) return;
+    widthInput.value = Math.max(1, Math.round((+heightInput.value || 0) / ratio()));
+  });
+  aspectLock.addEventListener('change', () => {
+    $('pixelHint').textContent = aspectLock.checked
+      ? 'With aspect ratio locked, each image keeps its own proportions and matches the width.'
+      : 'Unlocked: every image is forced to exactly these dimensions and may look stretched.';
+  });
+  percentRange.addEventListener('input', () => { $('percentVal').textContent = percentRange.value + '%'; });
+  qualityRange.addEventListener('input', () => { $('qualityVal').textContent = qualityRange.value + '%'; });
+
+  document.querySelectorAll('[data-preset]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const item = queue.selected;
+      const preset = btn.dataset.preset;
+      widthInput.value = preset === 'original'
+        ? (item ? item.img.naturalWidth : widthInput.value) : +preset;
+      widthInput.dispatchEvent(new Event('input'));
+      if (mode !== 'px') $('modePixels').click();
+    });
+  });
+
+  function outputType(file) {
+    if (formatSelect.value !== 'auto') return formatSelect.value;
+    return /^image\/(jpeg|png|webp)$/.test(file.type) ? file.type : 'image/png';
+  }
+  function syncFormatUI() {
+    $('qualityGroup').hidden = formatSelect.value === 'image/png';
+  }
+  formatSelect.addEventListener('change', syncFormatUI);
+
+  function targetSize(img) {
+    if (mode === 'pct') {
+      const scale = (+percentRange.value || 100) / 100;
+      return { w: Math.round(img.naturalWidth * scale), h: Math.round(img.naturalHeight * scale) };
+    }
+    const w = parseInt(widthInput.value, 10) || 0;
+    if (aspectLock.checked) {
+      // Each image derives its own height, so a mixed batch is never distorted.
+      return { w, h: Math.round(w * (img.naturalHeight / img.naturalWidth)) };
+    }
+    return { w, h: parseInt(heightInput.value, 10) || 0 };
+  }
+
+  async function resizeItem(item) {
+    let { w, h } = targetSize(item.img);
+    if (!w || !h) throw new Error('invalid size');
+    if (w > 20000 || h > 20000) throw new Error('over 20000px');
+    let note = '';
+    if ($('noUpscale').checked && w > item.img.naturalWidth) {
+      w = item.img.naturalWidth;
+      h = item.img.naturalHeight;
+      note = 'already smaller — left as is';
+    }
+    const type = outputType(item.file);
+    const canvas = drawToCanvas(item.img, w, h, type === 'image/jpeg' ? '#ffffff' : null);
+    const blob = await canvasToBlob(canvas, type,
+      type === 'image/png' ? undefined : +qualityRange.value / 100);
+    return {
+      blob,
+      name: withExtension('resized-' + item.file.name, blob.type),
+      note: note || w + '×' + h
+    };
+  }
+
+  function showPreview(item) {
+    updateOrigDims();
+    if (!item || !item.blob) { $('resultSection').hidden = true; $('emptyState').hidden = false; return; }
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    previewUrl = URL.createObjectURL(item.blob);
+    $('previewImg').src = previewUrl;
+    $('resultSection').hidden = false;
+    $('emptyState').hidden = true;
+    const dims = targetSize(item.img);
+    $('outDims').textContent = (item.note && /×/.test(item.note))
+      ? item.note : dims.w + '×' + dims.h;
+  }
+
+  // processAll is wired to applyBtn by the queue; refresh the preview after it.
+  $('applyBtn').addEventListener('click', () => {
+    setTimeout(() => showPreview(queue.selected), 60);
+  });
+
+  $('resetBtn').addEventListener('click', () => {
+    $('fileInput').value = '';
+    queue.clear();
+  });
+
+  syncFormatUI();
+})();
+</script>
+</body>
+</html>

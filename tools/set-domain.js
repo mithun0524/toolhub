@@ -1,0 +1,87 @@
+#!/usr/bin/env node
+/* Point the site at a real domain.
+ *   node tools/set-domain.js https://toolbox.example.org
+ *
+ * Rewrites sitemap.xml and robots.txt, and replaces every page's relative
+ * canonical (and og:url) with an absolute one — relative canonicals are legal
+ * but ambiguous the moment the site answers on more than one hostname.
+ * Re-running with a different domain is safe: it replaces, never appends.
+ */
+const fs = require('node:fs');
+const path = require('node:path');
+
+const ROOT = path.join(__dirname, '..');
+const raw = process.argv[2];
+
+if (!raw) {
+  console.error('Usage: node tools/set-domain.js https://yourdomain.com');
+  process.exit(1);
+}
+let origin;
+try {
+  const url = new URL(raw);
+  if (!/^https?:$/.test(url.protocol)) throw new Error('protocol');
+  origin = url.origin;
+} catch (e) {
+  console.error('Not a valid absolute URL: ' + raw);
+  process.exit(1);
+}
+
+// Every page, in the order the sitemap lists them.
+const PAGES = [
+  '', 'image/compress', 'image/resize', 'image/convert', 'image/bg-remove',
+  'pdf/compress', 'pdf/merge',
+  'text/word-counter', 'text/case-converter', 'text/lorem-ipsum', 'text/diff',
+  'calculators/emi', 'calculators/gst', 'calculators/age', 'calculators/percentage',
+  'developer/json-formatter', 'developer/base64', 'developer/password', 'developer/qr-code'
+];
+const PRIORITY = { '': '1.0' };
+const HIGH = new Set(['image/compress', 'image/resize', 'image/convert', 'pdf/compress', 'pdf/merge',
+  'text/word-counter', 'calculators/emi', 'calculators/gst',
+  'developer/json-formatter', 'developer/qr-code']);
+
+const today = new Date().toISOString().slice(0, 10);
+let changed = 0;
+
+/* ---- sitemap.xml ---- */
+const urls = PAGES.map((p) => {
+  const loc = origin + '/' + (p ? p + '/' : '');
+  const priority = PRIORITY[p] || (HIGH.has(p) ? '0.9' : '0.8');
+  return `  <url><loc>${loc}</loc><lastmod>${today}</lastmod>` +
+    `<changefreq>${p ? 'monthly' : 'weekly'}</changefreq><priority>${priority}</priority></url>`;
+}).join('\n');
+
+fs.writeFileSync(path.join(ROOT, 'sitemap.xml'),
+  '<?xml version="1.0" encoding="UTF-8"?>\n' +
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + '\n</urlset>\n');
+console.log('sitemap.xml   → ' + PAGES.length + ' URLs on ' + origin);
+
+/* ---- robots.txt ---- */
+fs.writeFileSync(path.join(ROOT, 'robots.txt'),
+  'User-agent: *\nAllow: /\n\nSitemap: ' + origin + '/sitemap.xml\n');
+console.log('robots.txt    → ' + origin + '/sitemap.xml');
+
+/* ---- canonical + og:url on each page ---- */
+for (const p of PAGES) {
+  const file = path.join(ROOT, p, 'index.html');
+  if (!fs.existsSync(file)) { console.warn('missing: ' + file); continue; }
+  const absolute = origin + '/' + (p ? p + '/' : '');
+  let html = fs.readFileSync(file, 'utf8');
+  const before = html;
+
+  html = html.replace(/<link rel="canonical" href="[^"]*"\/?>/,
+    `<link rel="canonical" href="${absolute}"/>`);
+
+  // og:url may not exist yet; add it next to og:type on first run.
+  if (/<meta property="og:url"/.test(html)) {
+    html = html.replace(/<meta property="og:url" content="[^"]*"\/?>/,
+      `<meta property="og:url" content="${absolute}"/>`);
+  } else {
+    html = html.replace(/(<meta property="og:type"[^>]*>)/,
+      `$1\n  <meta property="og:url" content="${absolute}"/>`);
+  }
+
+  if (html !== before) { fs.writeFileSync(file, html); changed++; }
+}
+console.log('canonical/og  → ' + changed + ' pages updated');
+console.log('\nDone. Commit the changes, then submit ' + origin + '/sitemap.xml in Search Console.');

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Replace https://example.com with your real domain before submitting:
+     sed -i '' 's|https://example.com|https://yoursite.com|g' sitemap.xml robots.txt -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://example.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+
+  <url><loc>https://example.com/image/compress/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://example.com/image/resize/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://example.com/image/convert/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://example.com/image/bg-remove/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <url><loc>https://example.com/pdf/compress/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://example.com/pdf/merge/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+
+  <url><loc>https://example.com/text/word-counter/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://example.com/text/case-converter/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://example.com/text/lorem-ipsum/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://example.com/text/diff/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <url><loc>https://example.com/calculators/emi/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://example.com/calculators/gst/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://example.com/calculators/age/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://example.com/calculators/percentage/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+
+  <url><loc>https://example.com/developer/json-formatter/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://example.com/developer/base64/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://example.com/developer/password/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://example.com/developer/qr-code/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+</urlset>

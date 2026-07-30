@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Percentage Calculator — Five Percent Calculations In One Page | ToolBox</title>
+  <meta name="description" content="Calculate percentage of a number, what percent one number is of another, percentage increase or decrease, reverse percentage, and apply a percentage change. Instant, with worked explanations."/>
+  <link rel="canonical" href="./"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Percentage Calculator — five modes, instant answers"/>
+  <meta property="og:description" content="Percent of, what percent, change, reverse percentage and apply — all on one page."/>
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <script src="../../js/theme.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="logo" aria-label="ToolBox home">
+      <span class="logo-icon"><img src="../../assets/logo-icon.svg" alt="" width="16" height="16"/></span>
+      ToolBox
+    </a>
+    <div class="nav-links">
+      <a href="../../index.html#image">Image</a>
+      <a href="../../index.html#pdf">PDF</a>
+      <a href="../../index.html#text">Text</a>
+      <a href="../../index.html#calculators" class="active">Calculators</a>
+      <a href="../../index.html#developer">Developer</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrapper container" id="main">
+  <header class="tool-page-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a> <span class="breadcrumb-sep">/</span>
+      <a href="../../index.html#calculators">Calculators</a> <span class="breadcrumb-sep">/</span>
+      <span aria-current="page">Percentage Calculator</span>
+    </nav>
+    <h1 class="tool-page-title">Percentage Calculator</h1>
+    <p class="tool-page-desc">The five percentage questions people actually ask, each answered as you type — with the working shown so you can check it.</p>
+    <div class="tool-badges">
+      <span class="badge">Five modes</span>
+      <span class="badge">Live answers</span>
+      <span class="badge">Working shown</span>
+    </div>
+  </header>
+
+  <div class="tool-panel">
+    <!-- 1 -->
+    <section style="padding-bottom:20px;border-bottom:1px solid var(--border)">
+      <h2 class="panel-title">1 · What is X% of Y?</h2>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span>What is</span>
+        <label class="visually-hidden" for="p1_percent">Percentage</label>
+        <input type="number" class="input-field" id="p1_percent" value="15" style="width:100px"/>
+        <span>% of</span>
+        <label class="visually-hidden" for="p1_total">Total</label>
+        <input type="number" class="input-field" id="p1_total" value="500" style="width:120px"/>
+        <span>=</span>
+        <strong id="p1_result" style="font-size:1.25rem;color:var(--accent)">75</strong>
+        <button class="copy-btn" data-copy="p1_result">Copy</button>
+      </div>
+      <p class="input-hint" id="p1_work"></p>
+    </section>
+
+    <!-- 2 -->
+    <section style="padding:20px 0;border-bottom:1px solid var(--border)">
+      <h2 class="panel-title">2 · X is what percent of Y?</h2>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <label class="visually-hidden" for="p2_num">Part</label>
+        <input type="number" class="input-field" id="p2_num" value="25" style="width:100px"/>
+        <span>is what % of</span>
+        <label class="visually-hidden" for="p2_total">Total</label>
+        <input type="number" class="input-field" id="p2_total" value="200" style="width:120px"/>
+        <span>=</span>
+        <strong id="p2_result" style="font-size:1.25rem;color:var(--accent)">12.5%</strong>
+        <button class="copy-btn" data-copy="p2_result">Copy</button>
+      </div>
+      <p class="input-hint" id="p2_work"></p>
+    </section>
+
+    <!-- 3 -->
+    <section style="padding:20px 0;border-bottom:1px solid var(--border)">
+      <h2 class="panel-title">3 · Percentage increase or decrease</h2>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span>From</span>
+        <label class="visually-hidden" for="p3_val1">Original value</label>
+        <input type="number" class="input-field" id="p3_val1" value="100" style="width:100px"/>
+        <span>to</span>
+        <label class="visually-hidden" for="p3_val2">New value</label>
+        <input type="number" class="input-field" id="p3_val2" value="150" style="width:120px"/>
+        <span>=</span>
+        <strong id="p3_result" style="font-size:1.25rem;color:var(--success)">+50%</strong>
+        <button class="copy-btn" data-copy="p3_result">Copy</button>
+      </div>
+      <p class="input-hint" id="p3_work"></p>
+    </section>
+
+    <!-- 4 -->
+    <section style="padding:20px 0;border-bottom:1px solid var(--border)">
+      <h2 class="panel-title">4 · X is P% of what number?</h2>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <label class="visually-hidden" for="p4_part">Part</label>
+        <input type="number" class="input-field" id="p4_part" value="25" style="width:100px"/>
+        <span>is</span>
+        <label class="visually-hidden" for="p4_percent">Percentage</label>
+        <input type="number" class="input-field" id="p4_percent" value="12.5" style="width:100px"/>
+        <span>% of</span>
+        <strong id="p4_result" style="font-size:1.25rem;color:var(--accent)">200</strong>
+        <button class="copy-btn" data-copy="p4_result">Copy</button>
+      </div>
+      <p class="input-hint" id="p4_work">Reverse percentage — useful for working back to a pre-discount price.</p>
+    </section>
+
+    <!-- 5 -->
+    <section style="padding-top:20px">
+      <h2 class="panel-title">5 · Increase or decrease a number by P%</h2>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <label class="visually-hidden" for="p5_value">Value</label>
+        <input type="number" class="input-field" id="p5_value" value="200" style="width:110px"/>
+        <span>changed by</span>
+        <label class="visually-hidden" for="p5_percent">Percentage change</label>
+        <input type="number" class="input-field" id="p5_percent" value="-10" style="width:100px"/>
+        <span>% =</span>
+        <strong id="p5_result" style="font-size:1.25rem;color:var(--accent)">180</strong>
+        <button class="copy-btn" data-copy="p5_result">Copy</button>
+      </div>
+      <p class="input-hint" id="p5_work">Use a negative percentage for a discount, positive for a markup.</p>
+    </section>
+  </div>
+
+  <div id="related" data-tool="calc-pct"></div>
+
+  <section class="faq-section">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <button class="faq-q">Why is a 50% rise then a 50% fall not back to the start?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Because each percentage applies to a different base. 100 rises by 50% to 150; a 50% fall from 150 is 75, not 100. To undo a rise of P% you need a fall of <code>P / (100 + P) × 100</code> percent — 33.3% in this example. Mode 4 does that arithmetic for you.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What is a reverse percentage?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Working backwards from the result to the original number. If a sale price of ₹1,700 is 85% of the original ticket price, mode 4 gives you the ₹2,000 you started from. This is the standard way to strip a discount or a tax out of a final figure.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Percentage points versus percent — what is the difference?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Going from 5% to 6% is a rise of one percentage point but a 20% increase. Both are correct and they mean very different things — which is why financial reporting always names the unit explicitly.</div></div>
+    </div>
+  </section>
+</div>
+
+<footer data-auto></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Percentage Calculator","applicationCategory":"UtilitiesApplication","operatingSystem":"Any browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Five percentage calculators: percent of, what percent, change, reverse and apply."}
+</script>
+
+<script src="../../js/tools-core.js"></script>
+<script src="../../js/main.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const P = window.ToolCore.pct;
+
+  // Two decimals, trailing zeros trimmed: 75.00 → 75, 12.50 → 12.5.
+  // Tiny non-zero results keep more digits instead of collapsing to 0.
+  const num = (v) => {
+    if (!isFinite(v)) return '–';
+    if (v !== 0 && Math.abs(v) < 0.01) return String(parseFloat(v.toPrecision(3)));
+    return String(parseFloat(v.toFixed(2)));
+  };
+  const pctStr = (v) => (isFinite(v) ? num(v) + '%' : '–');
+
+  function bind(ids, fn) {
+    ids.forEach((id) => {
+      $(id).addEventListener('input', fn);
+      $(id).addEventListener('change', fn);
+    });
+    fn();
+  }
+
+  bind(['p1_percent', 'p1_total'], () => {
+    const p = parseFloat($('p1_percent').value) || 0;
+    const t = parseFloat($('p1_total').value) || 0;
+    $('p1_result').textContent = num(P.of(p, t));
+    $('p1_work').textContent = `${p} ÷ 100 × ${t} = ${num(P.of(p, t))}`;
+  });
+
+  bind(['p2_num', 'p2_total'], () => {
+    const n = parseFloat($('p2_num').value) || 0;
+    const t = parseFloat($('p2_total').value) || 0;
+    $('p2_result').textContent = t ? pctStr(P.what(n, t)) : '–';
+    $('p2_work').textContent = t
+      ? `${n} ÷ ${t} × 100 = ${num(P.what(n, t))}%`
+      : 'Enter a total greater than zero.';
+  });
+
+  bind(['p3_val1', 'p3_val2'], () => {
+    const a = parseFloat($('p3_val1').value) || 0;
+    const b = parseFloat($('p3_val2').value) || 0;
+    const el = $('p3_result');
+    if (!a) {
+      el.textContent = '–';
+      el.style.color = 'var(--text-muted)';
+      $('p3_work').textContent = 'A change from zero has no defined percentage.';
+      return;
+    }
+    const change = P.change(a, b);
+    // Use a real minus sign; a hyphen reads as a dash at this size.
+    el.textContent = (change >= 0 ? '+' : '−') + num(Math.abs(change)) + '%';
+    el.style.color = change >= 0 ? 'var(--success)' : 'var(--danger)';
+    $('p3_work').textContent =
+      `(${b} − ${a}) ÷ ${a} × 100 = ${num(change)}% ` +
+      (change >= 0 ? 'increase' : 'decrease');
+  });
+
+  bind(['p4_part', 'p4_percent'], () => {
+    const part = parseFloat($('p4_part').value) || 0;
+    const p = parseFloat($('p4_percent').value) || 0;
+    $('p4_result').textContent = p ? num(P.total(part, p)) : '–';
+    $('p4_work').textContent = p
+      ? `${part} ÷ ${p} × 100 = ${num(P.total(part, p))}`
+      : 'Enter a percentage greater than zero.';
+  });
+
+  bind(['p5_value', 'p5_percent'], () => {
+    const v = parseFloat($('p5_value').value) || 0;
+    const p = parseFloat($('p5_percent').value) || 0;
+    const result = P.apply(v, p);
+    $('p5_result').textContent = num(result);
+    $('p5_work').textContent =
+      `${v} ${p >= 0 ? '+' : '−'} ${num(Math.abs(P.of(p, v)))} = ${num(result)}`;
+  });
+
+  document.querySelectorAll('[data-copy]').forEach((btn) => {
+    btn.addEventListener('click', () => copyToClipboard($(btn.dataset.copy).textContent, btn));
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QR Code Generator — PNG Or SVG, Custom Colours &amp; Size | ToolBox</title>
+  <meta name="description" content="Generate QR codes for links, text, Wi-Fi and contact details. Control size, colours, margin and error correction, then download a PNG or a crisp scalable SVG. Free, no signup."/>
+  <link rel="canonical" href="./"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="QR Code Generator — PNG or SVG, fully customisable"/>
+  <meta property="og:description" content="Live QR preview with size, colour and error-correction control. No watermark, no signup."/>
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <script src="../../js/theme.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="logo" aria-label="ToolBox home">
+      <span class="logo-icon"><img src="../../assets/logo-icon.svg" alt="" width="16" height="16"/></span>
+      ToolBox
+    </a>
+    <div class="nav-links">
+      <a href="../../index.html#image">Image</a>
+      <a href="../../index.html#pdf">PDF</a>
+      <a href="../../index.html#text">Text</a>
+      <a href="../../index.html#calculators">Calculators</a>
+      <a href="../../index.html#developer" class="active">Developer</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrapper container" id="main">
+  <header class="tool-page-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a> <span class="breadcrumb-sep">/</span>
+      <a href="../../index.html#developer">Developer Tools</a> <span class="breadcrumb-sep">/</span>
+      <span aria-current="page">QR Code Generator</span>
+    </nav>
+    <h1 class="tool-page-title">QR Code Generator</h1>
+    <p class="tool-page-desc">Type and watch the code redraw. Choose size, colours, quiet-zone margin and error-correction level, then download a PNG for the web or an SVG that stays sharp at any print size.</p>
+    <div class="tool-badges">
+      <span class="badge">Live preview</span>
+      <span class="badge">PNG &amp; SVG</span>
+      <span class="badge">No watermark</span>
+    </div>
+  </header>
+
+  <div class="tool-panel">
+    <div class="panel-split">
+      <div>
+        <p class="panel-title">Content</p>
+        <div class="input-group">
+          <div class="segmented" role="group" aria-label="Content type" style="margin-bottom:12px">
+            <button data-type="text" aria-pressed="true">Link / text</button>
+            <button data-type="wifi" aria-pressed="false">Wi-Fi</button>
+            <button data-type="vcard" aria-pressed="false">Contact</button>
+          </div>
+
+          <div id="textFields">
+            <label class="input-label" for="qrInput">URL or text</label>
+            <input type="text" class="input-field" id="qrInput" value="https://example.com"
+              placeholder="https://example.com or any text"/>
+          </div>
+
+          <div id="wifiFields" hidden>
+            <div class="input-group">
+              <label class="input-label" for="wifiSsid">Network name (SSID)</label>
+              <input type="text" class="input-field" id="wifiSsid" placeholder="MyNetwork"/>
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="wifiPass">Password</label>
+              <input type="text" class="input-field" id="wifiPass" placeholder="Leave blank for open networks"/>
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="wifiType">Security</label>
+              <select class="input-field" id="wifiType">
+                <option value="WPA">WPA / WPA2 / WPA3</option>
+                <option value="WEP">WEP</option>
+                <option value="nopass">Open (no password)</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="vcardFields" hidden>
+            <div class="grid-2">
+              <div class="input-group">
+                <label class="input-label" for="vcName">Name</label>
+                <input type="text" class="input-field" id="vcName" placeholder="Ada Lovelace"/>
+              </div>
+              <div class="input-group">
+                <label class="input-label" for="vcPhone">Phone</label>
+                <input type="tel" class="input-field" id="vcPhone" placeholder="+91 90000 00000"/>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="input-group">
+                <label class="input-label" for="vcEmail">Email</label>
+                <input type="email" class="input-field" id="vcEmail" placeholder="ada@example.com"/>
+              </div>
+              <div class="input-group">
+                <label class="input-label" for="vcOrg">Organisation</label>
+                <input type="text" class="input-field" id="vcOrg" placeholder="ToolBox"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="panel-title" style="margin-top:18px">Appearance</p>
+        <div class="input-group">
+          <label class="input-label" for="sizeRange">Size</label>
+          <div class="range-wrap">
+            <input type="range" id="sizeRange" min="128" max="1024" step="32" value="256"/>
+            <span class="range-val" id="sizeVal">256</span>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="input-group">
+            <label class="input-label" for="darkColor">Code colour</label>
+            <input type="color" class="input-field" id="darkColor" value="#000000" style="height:40px;padding:4px"/>
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="lightColor">Background</label>
+            <input type="color" class="input-field" id="lightColor" value="#ffffff" style="height:40px;padding:4px"/>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="input-group">
+            <label class="input-label" for="eccSelect">Error correction</label>
+            <select class="input-field" id="eccSelect">
+              <option value="L">L — 7% recoverable</option>
+              <option value="M" selected>M — 15% recoverable</option>
+              <option value="Q">Q — 25% recoverable</option>
+              <option value="H">H — 30% recoverable</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="marginRange">Quiet zone</label>
+            <div class="range-wrap">
+              <input type="range" id="marginRange" min="0" max="8" value="4"/>
+              <span class="range-val" id="marginVal">4</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div id="qrWrap" style="text-align:center;padding:20px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius-md)">
+          <div id="qrcode" style="display:inline-block;line-height:0"></div>
+          <p class="input-hint" id="emptyHint" hidden style="margin:0">Enter a link or some text to generate a QR code.</p>
+          <div class="result-box error" id="errorBox" hidden><pre id="errorMsg"></pre></div>
+        </div>
+
+        <div class="btn-group" style="margin-top:14px;justify-content:center">
+          <button class="btn btn-success" id="downloadPngBtn">Download PNG</button>
+          <button class="btn btn-secondary" id="downloadSvgBtn">Download SVG</button>
+          <button class="copy-btn" id="copyContentBtn">Copy encoded text</button>
+        </div>
+        <p class="input-hint" id="capacityHint" style="text-align:center"></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="related" data-tool="dev-qr"></div>
+
+  <section class="faq-section">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <button class="faq-q">Do these QR codes expire?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>No. The code encodes your content directly, with no redirect through our servers — nothing to expire, no tracking, and it keeps working if this site ever disappears. That also means the destination cannot be changed later: reprint the code if the link changes.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Which error-correction level should I choose?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>M is right for screens and clean printing. Choose Q or H when the code will be printed small, on packaging, on a curved surface, or anywhere it may get scuffed — higher levels survive damage but make the pattern denser.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Why does my code fail to scan?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Three usual reasons: too little contrast between the two colours (keep the code dark on a light background, never the reverse), no quiet zone (leave a margin of at least 4 modules), or printing it smaller than about 2 cm across. Always test with a real phone camera before printing a batch.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">When should I download SVG instead of PNG?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Use SVG for anything going to print or into a design file — it is vector, so it stays perfectly sharp on a poster or a business card. PNG is fine for web pages, email and slides.</div></div>
+    </div>
+  </section>
+</div>
+
+<footer data-auto></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"SoftwareApplication","name":"QR Code Generator","applicationCategory":"UtilitiesApplication","operatingSystem":"Any browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Generate customisable QR codes and download them as PNG or SVG."},
+ {"@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"Do these QR codes expire?","acceptedAnswer":{"@type":"Answer","text":"No. The content is encoded directly with no redirect, so there is nothing to expire and no tracking."}},
+  {"@type":"Question","name":"Why does my code fail to scan?","acceptedAnswer":{"@type":"Answer","text":"Usually low contrast, a missing quiet-zone margin, or printing smaller than about 2 cm across."}}
+ ]}]}
+</script>
+
+<script src="../../js/tools-core.js"></script>
+<script src="../../js/main.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const container = $('qrcode');
+  let type = 'text';
+  let lastContent = '';
+  let debounce = null;
+
+  const escapeWifi = (s) => String(s).replace(/([\\;,:"])/g, '\\$1');
+
+  function content() {
+    if (type === 'wifi') {
+      const ssid = $('wifiSsid').value.trim();
+      if (!ssid) return '';
+      const security = $('wifiType').value;
+      const pass = $('wifiPass').value;
+      return `WIFI:T:${security};S:${escapeWifi(ssid)};` +
+        (security === 'nopass' || !pass ? '' : `P:${escapeWifi(pass)};`) + ';';
+    }
+    if (type === 'vcard') {
+      const name = $('vcName').value.trim();
+      if (!name && !$('vcPhone').value.trim() && !$('vcEmail').value.trim()) return '';
+      return ['BEGIN:VCARD', 'VERSION:3.0',
+        'FN:' + name,
+        $('vcOrg').value.trim() ? 'ORG:' + $('vcOrg').value.trim() : '',
+        $('vcPhone').value.trim() ? 'TEL;TYPE=CELL:' + $('vcPhone').value.trim() : '',
+        $('vcEmail').value.trim() ? 'EMAIL:' + $('vcEmail').value.trim() : '',
+        'END:VCARD'].filter(Boolean).join('\n');
+    }
+    return $('qrInput').value.trim();
+  }
+
+  function error(msg) {
+    $('errorBox').hidden = !msg;
+    if (msg) $('errorMsg').textContent = msg;
+  }
+
+  function render() {
+    const text = content();
+    lastContent = text;
+    container.innerHTML = '';
+    $('emptyHint').hidden = !!text;
+    error('');
+    $('downloadPngBtn').disabled = !text;
+    $('downloadSvgBtn').disabled = !text;
+    $('capacityHint').textContent = text ? text.length + ' characters encoded' : '';
+    if (!text) return;
+
+    const size = +$('sizeRange').value;
+    try {
+      window.__qr = new QRCode(container, {
+        text,
+        width: size,
+        height: size,
+        colorDark: $('darkColor').value,
+        colorLight: $('lightColor').value,
+        correctLevel: QRCode.CorrectLevel[$('eccSelect').value]
+      });
+      applyMargin();
+    } catch (e) {
+      container.innerHTML = '';
+      error('That content is too long for a single QR code. Shorten it, or lower the error-correction level.');
+      $('downloadPngBtn').disabled = true;
+      $('downloadSvgBtn').disabled = true;
+    }
+  }
+
+  // qrcodejs draws no quiet zone, so add it as padding on the wrapper.
+  function applyMargin() {
+    const modulePx = +$('sizeRange').value / (moduleCount() || 25);
+    container.style.padding = Math.round(+$('marginRange').value * modulePx) + 'px';
+    container.style.background = $('lightColor').value;
+  }
+
+  function moduleCount() {
+    const qr = window.__qr && window.__qr._oQRCode;
+    return qr && typeof qr.getModuleCount === 'function' ? qr.getModuleCount() : 0;
+  }
+
+  const schedule = () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(render, 150);
+  };
+
+  document.querySelectorAll('[data-type]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      type = btn.dataset.type;
+      document.querySelectorAll('[data-type]').forEach((b) =>
+        b.setAttribute('aria-pressed', String(b === btn)));
+      $('textFields').hidden = type !== 'text';
+      $('wifiFields').hidden = type !== 'wifi';
+      $('vcardFields').hidden = type !== 'vcard';
+      render();
+    });
+  });
+
+  ['qrInput', 'wifiSsid', 'wifiPass', 'vcName', 'vcPhone', 'vcEmail', 'vcOrg']
+    .forEach((id) => $(id).addEventListener('input', schedule));
+  ['wifiType', 'eccSelect', 'darkColor', 'lightColor'].forEach((id) =>
+    $(id).addEventListener('change', render));
+  $('sizeRange').addEventListener('input', () => {
+    $('sizeVal').textContent = $('sizeRange').value;
+    render();
+  });
+  $('marginRange').addEventListener('input', () => {
+    $('marginVal').textContent = $('marginRange').value;
+    applyMargin();
+  });
+
+  $('downloadPngBtn').addEventListener('click', () => {
+    const canvas = container.querySelector('canvas');
+    const img = container.querySelector('img');
+    if (canvas) {
+      canvas.toBlob((blob) => downloadBlob(blob, 'qr-code.png'), 'image/png');
+    } else if (img && img.src) {
+      const a = document.createElement('a');
+      a.href = img.src; a.download = 'qr-code.png'; a.click();
+    } else {
+      showToast('Generate a code first', 'error');
+    }
+  });
+
+  // Build the SVG from the QR model so print output stays vector-sharp.
+  $('downloadSvgBtn').addEventListener('click', () => {
+    const qr = window.__qr && window.__qr._oQRCode;
+    if (!qr || typeof qr.isDark !== 'function') {
+      return showToast('SVG export is unavailable — use PNG instead', 'error');
+    }
+    const count = qr.getModuleCount();
+    const margin = +$('marginRange').value;
+    const total = count + margin * 2;
+    let path = '';
+    for (let row = 0; row < count; row++) {
+      for (let col = 0; col < count; col++) {
+        if (qr.isDark(row, col)) path += `M${col + margin} ${row + margin}h1v1h-1z`;
+      }
+    }
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${total} ${total}" ` +
+      `width="${$('sizeRange').value}" height="${$('sizeRange').value}" shape-rendering="crispEdges">` +
+      `<rect width="${total}" height="${total}" fill="${$('lightColor').value}"/>` +
+      `<path d="${path}" fill="${$('darkColor').value}"/></svg>`;
+    downloadFile(svg, 'qr-code.svg', 'image/svg+xml');
+  });
+
+  $('copyContentBtn').addEventListener('click', () =>
+    copyToClipboard(lastContent, $('copyContentBtn')));
+
+  render();
+})();
+</script>
+</body>
+</html>

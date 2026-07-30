@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GST Calculator — Add Or Remove GST With CGST/SGST Split | ToolBox</title>
+  <meta name="description" content="Calculate GST online for 0.25%, 3%, 5%, 12%, 18% and 28% slabs. Add GST to a base price or extract GST from an inclusive price, with the CGST, SGST and IGST breakdown."/>
+  <link rel="canonical" href="./"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="GST Calculator — inclusive and exclusive, with CGST/SGST"/>
+  <meta property="og:description" content="Add or remove GST at any slab and see the tax split instantly."/>
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <script src="../../js/theme.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="logo" aria-label="ToolBox home">
+      <span class="logo-icon"><img src="../../assets/logo-icon.svg" alt="" width="16" height="16"/></span>
+      ToolBox
+    </a>
+    <div class="nav-links">
+      <a href="../../index.html#image">Image</a>
+      <a href="../../index.html#pdf">PDF</a>
+      <a href="../../index.html#text">Text</a>
+      <a href="../../index.html#calculators" class="active">Calculators</a>
+      <a href="../../index.html#developer">Developer</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrapper container" id="main">
+  <header class="tool-page-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a> <span class="breadcrumb-sep">/</span>
+      <a href="../../index.html#calculators">Calculators</a> <span class="breadcrumb-sep">/</span>
+      <span aria-current="page">GST Calculator</span>
+    </nav>
+    <h1 class="tool-page-title">GST Calculator</h1>
+    <p class="tool-page-desc">Add GST to a base price, or work backwards from a GST-inclusive price to find the tax hidden inside it — with the CGST, SGST and IGST split you need for an invoice.</p>
+    <div class="tool-badges">
+      <span class="badge">Inclusive &amp; exclusive</span>
+      <span class="badge">CGST / SGST / IGST</span>
+      <span class="badge">All slabs</span>
+    </div>
+  </header>
+
+  <div class="tool-panel">
+    <div class="panel-split">
+      <div>
+        <p class="panel-title">Input</p>
+
+        <div class="input-group">
+          <p class="input-label">Calculation type</p>
+          <div class="segmented" role="group" aria-label="Calculation type">
+            <button data-mode="add" aria-pressed="true">Add GST</button>
+            <button data-mode="remove" aria-pressed="false">Remove GST</button>
+          </div>
+          <p class="input-hint" id="modeHint">Your amount is treated as the price before tax.</p>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="amountInput"><span id="amountLabel">Amount before GST</span></label>
+          <input type="number" class="input-field" id="amountInput" value="10000" min="0" step="100"/>
+        </div>
+
+        <div class="input-group">
+          <p class="input-label">GST rate</p>
+          <div class="btn-group">
+            <button class="btn btn-secondary btn-sm" data-rate="0.25">0.25%</button>
+            <button class="btn btn-secondary btn-sm" data-rate="3">3%</button>
+            <button class="btn btn-secondary btn-sm" data-rate="5">5%</button>
+            <button class="btn btn-secondary btn-sm" data-rate="12">12%</button>
+            <button class="btn btn-primary btn-sm" data-rate="18">18%</button>
+            <button class="btn btn-secondary btn-sm" data-rate="28">28%</button>
+          </div>
+          <div class="input-suffix" style="margin-top:10px">
+            <input type="number" class="input-field" id="rateInput" value="18" min="0" max="100" step="0.25" aria-label="Custom GST rate"/>
+            <span class="suffix">%</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <p class="input-label">Supply type</p>
+          <div class="segmented" role="group" aria-label="Supply type">
+            <button data-supply="intra" aria-pressed="true">Intra-state</button>
+            <button data-supply="inter" aria-pressed="false">Inter-state</button>
+          </div>
+          <p class="input-hint" id="supplyHint">Within one state: tax splits equally into CGST and SGST.</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="stat-cards">
+          <div class="stat-card"><div class="stat-card-val" id="netAmountVal">–</div><div class="stat-card-label">Taxable value</div></div>
+          <div class="stat-card highlight"><div class="stat-card-val" id="gstAmountVal">–</div><div class="stat-card-label">GST amount</div></div>
+          <div class="stat-card"><div class="stat-card-val good" id="grossAmountVal">–</div><div class="stat-card-label">Total (incl. GST)</div></div>
+        </div>
+
+        <div class="table-wrap" style="margin-top:16px">
+          <table class="data-table">
+            <thead><tr><th>Component</th><th>Rate</th><th>Amount</th></tr></thead>
+            <tbody>
+              <tr id="cgstRow"><td>CGST</td><td id="cgstRate">9%</td><td id="cgstVal">–</td></tr>
+              <tr id="sgstRow"><td>SGST</td><td id="sgstRate">9%</td><td id="sgstVal">–</td></tr>
+              <tr id="igstRow" hidden><td>IGST</td><td id="igstRate">18%</td><td id="igstVal">–</td></tr>
+              <tr><td><strong>Total tax</strong></td><td id="totalRate">18%</td><td id="totalTaxVal">–</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="result-box" style="margin-top:16px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <span id="explainText"></span>
+        </div>
+
+        <div class="btn-group" style="margin-top:14px">
+          <button class="copy-btn" id="copyBtn">Copy breakdown</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="related" data-tool="calc-gst"></div>
+
+  <section class="faq-section">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <button class="faq-q">What is the difference between adding and removing GST?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Adding GST treats your number as the pre-tax value and multiplies by the rate. Removing GST treats it as the final price already containing tax, so the taxable value is <code>amount ÷ (1 + rate/100)</code>. This is the step people most often get wrong: 18% of an inclusive ₹11,800 is not ₹2,124, it is ₹1,800.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">When is it CGST + SGST versus IGST?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>For a supply inside one state the total tax is split equally between central GST and state GST — 18% becomes 9% + 9%. For a supply across state lines, the whole amount is charged as a single integrated GST (IGST) of 18%. The total the customer pays is identical either way.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Which slab applies to my product?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Slabs are set per HSN/SAC code: 5% for essentials and most food items, 12% and 18% for the bulk of goods and services, 28% for luxury and sin goods, plus special rates of 0.25% (rough diamonds) and 3% (gold and jewellery). Check your HSN code with a tax professional — rates are revised by the GST Council.</div></div>
+    </div>
+  </section>
+</div>
+
+<footer data-auto></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"SoftwareApplication","name":"GST Calculator","applicationCategory":"FinanceApplication","operatingSystem":"Any browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Add or remove GST with CGST, SGST and IGST breakdown."},
+ {"@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"What is the difference between adding and removing GST?","acceptedAnswer":{"@type":"Answer","text":"Adding multiplies a pre-tax value by the rate. Removing divides an inclusive price by (1 + rate/100) to find the taxable value."}},
+  {"@type":"Question","name":"When is it CGST + SGST versus IGST?","acceptedAnswer":{"@type":"Answer","text":"Intra-state supplies split the tax equally into CGST and SGST; inter-state supplies charge the full amount as IGST."}}
+ ]}]}
+</script>
+
+<script src="../../js/tools-core.js"></script>
+<script src="../../js/main.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const T = window.ToolCore;
+  let mode = 'add', supply = 'intra';
+  window.CURRENCY = 'INR';
+
+  document.querySelectorAll('[data-mode]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      mode = btn.dataset.mode;
+      document.querySelectorAll('[data-mode]').forEach((b) =>
+        b.setAttribute('aria-pressed', String(b === btn)));
+      $('amountLabel').textContent = mode === 'add' ? 'Amount before GST' : 'Amount including GST';
+      $('modeHint').textContent = mode === 'add'
+        ? 'Your amount is treated as the price before tax.'
+        : 'Your amount is treated as the final price with tax already inside it.';
+      calculate();
+    });
+  });
+
+  document.querySelectorAll('[data-supply]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      supply = btn.dataset.supply;
+      document.querySelectorAll('[data-supply]').forEach((b) =>
+        b.setAttribute('aria-pressed', String(b === btn)));
+      $('supplyHint').textContent = supply === 'intra'
+        ? 'Within one state: tax splits equally into CGST and SGST.'
+        : 'Across states: the whole tax is charged as a single IGST.';
+      calculate();
+    });
+  });
+
+  document.querySelectorAll('[data-rate]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      $('rateInput').value = btn.dataset.rate;
+      syncRateButtons();
+      calculate();
+    });
+  });
+
+  function syncRateButtons() {
+    const rate = $('rateInput').value;
+    document.querySelectorAll('[data-rate]').forEach((b) => {
+      const on = b.dataset.rate === String(parseFloat(rate));
+      b.classList.toggle('btn-primary', on);
+      b.classList.toggle('btn-secondary', !on);
+    });
+  }
+
+  $('amountInput').addEventListener('input', calculate);
+  $('rateInput').addEventListener('input', () => { syncRateButtons(); calculate(); });
+
+  function calculate() {
+    const amount = parseFloat($('amountInput').value) || 0;
+    const rate = Math.max(0, Math.min(100, parseFloat($('rateInput').value) || 0));
+    const r = T.gst(amount, rate, mode);
+    const half = (rate / 2);
+
+    $('netAmountVal').textContent = formatCurrency(r.net);
+    $('gstAmountVal').textContent = formatCurrency(r.tax);
+    $('grossAmountVal').textContent = formatCurrency(r.gross);
+
+    const intra = supply === 'intra';
+    $('cgstRow').hidden = !intra;
+    $('sgstRow').hidden = !intra;
+    $('igstRow').hidden = intra;
+    $('cgstRate').textContent = half + '%';
+    $('sgstRate').textContent = half + '%';
+    $('igstRate').textContent = rate + '%';
+    $('totalRate').textContent = rate + '%';
+    $('cgstVal').textContent = formatCurrency(r.cgst);
+    $('sgstVal').textContent = formatCurrency(r.sgst);
+    $('igstVal').textContent = formatCurrency(r.igst);
+    $('totalTaxVal').textContent = formatCurrency(r.tax);
+
+    $('explainText').textContent = mode === 'add'
+      ? `${formatCurrency(r.net)} + ${rate}% GST (${formatCurrency(r.tax)}) = ${formatCurrency(r.gross)}.`
+      : `${formatCurrency(r.gross)} ÷ ${(1 + rate / 100).toFixed(4)} = ${formatCurrency(r.net)} taxable value, ` +
+        `so ${formatCurrency(r.tax)} of it is GST.`;
+  }
+
+  $('copyBtn').addEventListener('click', () => {
+    const rate = $('rateInput').value;
+    const lines = [
+      'Taxable value: ' + $('netAmountVal').textContent,
+      'GST (' + rate + '%): ' + $('gstAmountVal').textContent,
+      supply === 'intra'
+        ? 'CGST: ' + $('cgstVal').textContent + '  SGST: ' + $('sgstVal').textContent
+        : 'IGST: ' + $('igstVal').textContent,
+      'Total: ' + $('grossAmountVal').textContent
+    ];
+    copyToClipboard(lines.join('\n'), $('copyBtn'));
+  });
+
+  syncRateButtons();
+  calculate();
+})();
+</script>
+</body>
+</html>

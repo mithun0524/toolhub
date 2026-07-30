@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Background Remover — Batch Transparent PNGs In Your Browser | ToolBox</title>
+  <meta name="description" content="Remove a solid or near-solid background from images and download transparent PNGs, one file or a batch. Click to pick the colour, tune tolerance and soften edges. Runs fully in your browser."/>
+  <link rel="canonical" href="./"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Background Remover — transparent PNG, no uploads"/>
+  <meta property="og:description" content="Colour-key backgrounds out of images and export transparent PNGs, locally."/>
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <script src="../../js/theme.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="logo" aria-label="ToolBox home">
+      <span class="logo-icon"><img src="../../assets/logo-icon.svg" alt="" width="16" height="16"/></span>
+      ToolBox
+    </a>
+    <div class="nav-links">
+      <a href="../../index.html#image" class="active">Image</a>
+      <a href="../../index.html#pdf">PDF</a>
+      <a href="../../index.html#text">Text</a>
+      <a href="../../index.html#calculators">Calculators</a>
+      <a href="../../index.html#developer">Developer</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrapper container" id="main">
+  <header class="tool-page-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a> <span class="breadcrumb-sep">/</span>
+      <a href="../../index.html#image">Image Tools</a> <span class="breadcrumb-sep">/</span>
+      <span aria-current="page">Background Remover</span>
+    </nav>
+    <h1 class="tool-page-title">Background Remover</h1>
+    <p class="tool-page-desc">Best for logos, product shots and screenshots on a flat background: click the colour you want gone, adjust tolerance, and export transparent PNGs — including a whole batch shot against the same backdrop.</p>
+    <div class="tool-badges">
+      <span class="badge">Batch capable</span>
+      <span class="badge">Click to pick colour</span>
+      <span class="badge">Edge softening</span>
+    </div>
+  </header>
+
+  <div class="tool-panel">
+    <div class="drop-zone" id="dropZone" aria-label="Choose images">
+      <svg class="drop-zone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/></svg>
+      <p class="drop-zone-text">Drop images here, or click to choose</p>
+      <p class="drop-zone-sub">Works best on flat, single-colour backgrounds · multiple files supported</p>
+      <input type="file" id="fileInput" accept="image/*" multiple/>
+    </div>
+
+    <div id="workspace" hidden>
+      <div class="panel-split" style="margin-top:22px">
+        <div>
+          <p class="panel-title">Settings</p>
+
+          <div class="input-group">
+            <p class="input-label">Background colour</p>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span id="pickedSwatch" style="width:34px;height:34px;border-radius:var(--radius-sm);border:1px solid var(--border);display:block"></span>
+              <code id="pickedHex" class="mono" style="font-size:0.82rem;color:var(--text-secondary)">#ffffff</code>
+            </div>
+            <p class="input-hint">Detected from the image corners. Click anywhere on the preview to pick a different colour.</p>
+          </div>
+
+          <label class="check-row" for="perImageColor">
+            <input type="checkbox" id="perImageColor" checked/> Detect the colour separately per image
+          </label>
+          <p class="input-hint" style="margin-top:0">Uncheck to key every image with the colour shown above.</p>
+
+          <div class="input-group" style="margin-top:14px">
+            <label class="input-label" for="toleranceRange">Tolerance</label>
+            <div class="range-wrap">
+              <input type="range" id="toleranceRange" min="1" max="100" value="28"/>
+              <span class="range-val" id="toleranceVal">28</span>
+            </div>
+            <p class="input-hint">Raise it if patches of background remain; lower it if your subject starts disappearing.</p>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="featherRange">Edge softness</label>
+            <div class="range-wrap">
+              <input type="range" id="featherRange" min="0" max="40" value="12"/>
+              <span class="range-val" id="featherVal">12</span>
+            </div>
+            <p class="input-hint">Fades pixels close to the tolerance limit so edges do not look cut out with scissors.</p>
+          </div>
+
+          <label class="check-row" for="contiguousCheck">
+            <input type="checkbox" id="contiguousCheck"/> Only remove the area connected to the edges
+          </label>
+          <p class="input-hint" style="margin-top:0">Keeps same-coloured areas inside your subject (e.g. white eyes on a white background).</p>
+
+          <div class="btn-group" style="margin-top:16px">
+            <button class="btn btn-primary" id="applyBtn">Apply</button>
+            <button class="btn btn-secondary" id="addMoreBtn">Add files</button>
+            <button class="btn btn-ghost btn-sm" id="resetBtn">Clear all</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="stat-cards" style="margin-bottom:14px">
+            <div class="stat-card"><div class="stat-card-val" id="dimsVal">–</div><div class="stat-card-label">Dimensions</div></div>
+            <div class="stat-card"><div class="stat-card-val" id="removedVal">–</div><div class="stat-card-label">Pixels removed</div></div>
+            <div class="stat-card"><div class="stat-card-val" id="outSize">–</div><div class="stat-card-label">PNG size</div></div>
+          </div>
+          <div class="preview-frame" style="cursor:crosshair" id="previewFrame">
+            <img id="previewImg" alt="Image with the background removed"/>
+          </div>
+
+          <p class="panel-title" style="margin-top:14px">Files (<span id="fileCount">0</span>)</p>
+          <ul class="file-list" id="fileList"></ul>
+
+          <div class="btn-group" style="margin-top:14px">
+            <button class="btn btn-success" id="downloadAllBtn" disabled>Download</button>
+          </div>
+          <p class="input-hint">Two or more files are saved as a single ZIP.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="related" data-tool="img-bg"></div>
+
+  <section class="faq-section">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <button class="faq-q">Does this work on photos with busy backgrounds?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>No — this is a colour-key tool, not an AI subject detector. It shines on logos, icons, screenshots, scanned signatures and studio product shots where the background is one flat colour. For a photo of a person in a park you need AI segmentation, which would mean uploading your image to a server.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What do tolerance and edge softness do?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Tolerance decides how different a pixel can be from the picked colour and still count as background — useful because JPEG compression and camera noise mean “white” is never exactly one value. Edge softness fades the pixels sitting near that limit to partial transparency, removing the hard jagged outline you otherwise get.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Can I process a batch shot on the same backdrop?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Yes. Drop them all in, then uncheck “detect the colour separately per image” and pick the colour once — every file is keyed against that exact value, which keeps a product set visually consistent.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Why must the output be a PNG?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Transparency needs an alpha channel. PNG (and WebP) support it; JPEG does not, which is why a JPEG export would put the background straight back as solid white.</div></div>
+    </div>
+  </section>
+</div>
+
+<footer data-auto></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Background Remover","applicationCategory":"MultimediaApplication","operatingSystem":"Any browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Colour-key solid backgrounds out of images and export transparent PNGs in the browser."}
+</script>
+
+<script src="../../js/tools-core.js"></script>
+<script src="../../js/main.js"></script>
+<script src="../../js/image-batch.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const toleranceRange = $('toleranceRange'), featherRange = $('featherRange');
+  let picked = { r: 255, g: 255, b: 255 };
+  let previewUrl = null;
+
+  const hex = (c) => '#' + [c.r, c.g, c.b].map((v) => v.toString(16).padStart(2, '0')).join('');
+
+  const queue = createImageQueue({
+    listEl: $('fileList'),
+    countEl: $('fileCount'),
+    processBtn: $('applyBtn'),
+    downloadAllBtn: $('downloadAllBtn'),
+    busyLabel: 'Working…',
+    zipName: 'transparent-pngs.zip',
+    statEls: { out: $('outSize') },
+    process: removeBackground,
+    onSelect: showPreview,
+    onChange: (q) => {
+      $('workspace').hidden = q.items.length === 0;
+      if (!q.items.length) {
+        $('previewImg').removeAttribute('src');
+        ['dimsVal', 'removedVal', 'outSize'].forEach((id) => { $(id).textContent = '–'; });
+        $('dropZone').querySelector('.drop-zone-text').textContent = 'Drop images here, or click to choose';
+      }
+    }
+  });
+
+  initDropZone($('dropZone'), $('fileInput'), async (files) => {
+    if (!(await queue.add(files))) return;
+    $('workspace').hidden = false;
+    $('dropZone').querySelector('.drop-zone-text').textContent = 'Drop more images here';
+    // Cache pixels once per item; every slider change reuses them.
+    for (const item of queue.items) {
+      if (item.pixels) continue;
+      const canvas = drawToCanvas(item.img, item.img.naturalWidth, item.img.naturalHeight);
+      item.pixels = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+      item.autoColor = detectBackground(item.pixels, canvas.width, canvas.height);
+    }
+    picked = queue.items[0].autoColor;
+    paintSwatch();
+    queue.render();
+    await queue.processAll();
+    showPreview(queue.selected);
+  });
+  $('addMoreBtn').addEventListener('click', () => $('fileInput').click());
+
+  // Median of the four corners: far more reliable than trusting pixel (0,0),
+  // which is often a stray compression artefact.
+  function detectBackground(data, w, h) {
+    const at = (x, y) => {
+      const i = (y * w + x) * 4;
+      return { r: data.data[i], g: data.data[i + 1], b: data.data[i + 2] };
+    };
+    const corners = [at(0, 0), at(w - 1, 0), at(0, h - 1), at(w - 1, h - 1)];
+    const med = (key) => {
+      const vals = corners.map((c) => c[key]).sort((a, b) => a - b);
+      return Math.round((vals[1] + vals[2]) / 2);
+    };
+    return { r: med('r'), g: med('g'), b: med('b') };
+  }
+
+  function paintSwatch() {
+    $('pickedSwatch').style.background = hex(picked);
+    $('pickedHex').textContent = hex(picked);
+  }
+
+  function keyColorFor(item) {
+    return $('perImageColor').checked && item.autoColor && !item.manualColor
+      ? item.autoColor : picked;
+  }
+
+  async function removeBackground(item) {
+    const key = keyColorFor(item);
+    const w = item.pixels.width, h = item.pixels.height;
+    const out = new ImageData(new Uint8ClampedArray(item.pixels.data), w, h);
+    const d = out.data;
+    const limit = (+toleranceRange.value / 100) * 255;
+    const feather = (+featherRange.value / 100) * 255;
+    let removed = 0;
+
+    const distance = (i) => {
+      const dr = d[i] - key.r, dg = d[i + 1] - key.g, db = d[i + 2] - key.b;
+      return Math.sqrt(dr * dr + dg * dg + db * db);
+    };
+    const alphaFor = (dist) => (feather > 0 && dist > limit - feather
+      ? Math.round(255 * ((dist - (limit - feather)) / feather)) : 0);
+
+    if ($('contiguousCheck').checked) {
+      // Flood fill inward from the border so enclosed same-colour areas stay.
+      const seen = new Uint8Array(w * h);
+      const stack = [];
+      for (let x = 0; x < w; x++) stack.push(x, (h - 1) * w + x);
+      for (let y = 0; y < h; y++) stack.push(y * w, y * w + w - 1);
+      while (stack.length) {
+        const p = stack.pop();
+        if (seen[p]) continue;
+        seen[p] = 1;
+        const i = p * 4;
+        const dist = distance(i);
+        if (dist > limit) continue;
+        const alpha = alphaFor(dist);
+        if (d[i + 3] > alpha) { d[i + 3] = alpha; if (alpha === 0) removed++; }
+        const x = p % w, y = (p - x) / w;
+        if (x > 0) stack.push(p - 1);
+        if (x < w - 1) stack.push(p + 1);
+        if (y > 0) stack.push(p - w);
+        if (y < h - 1) stack.push(p + w);
+      }
+    } else {
+      for (let i = 0; i < d.length; i += 4) {
+        const dist = distance(i);
+        if (dist > limit) continue;
+        const alpha = alphaFor(dist);
+        d[i + 3] = Math.min(d[i + 3], alpha);
+        if (alpha === 0) removed++;
+      }
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').putImageData(out, 0, 0);
+    const blob = await canvasToBlob(canvas, 'image/png');
+    item.removedPct = Math.round((removed / (w * h)) * 100);
+    return {
+      blob,
+      name: withExtension('no-bg-' + item.file.name, 'image/png'),
+      note: item.removedPct + '% removed'
+    };
+  }
+
+  function showPreview(item) {
+    if (!item || !item.blob) return;
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    previewUrl = URL.createObjectURL(item.blob);
+    $('previewImg').src = previewUrl;
+    $('dimsVal').textContent = item.pixels.width + '×' + item.pixels.height;
+    $('removedVal').textContent = (item.removedPct || 0) + '%';
+    $('outSize').textContent = formatBytes(item.blob.size);
+    if (!$('perImageColor').checked || item.manualColor) { picked = keyColorFor(item); paintSwatch(); }
+  }
+
+  const reprocess = async () => {
+    await queue.processAll();
+    showPreview(queue.selected);
+  };
+
+  toleranceRange.addEventListener('input', () => { $('toleranceVal').textContent = toleranceRange.value; });
+  featherRange.addEventListener('input', () => { $('featherVal').textContent = featherRange.value; });
+  toleranceRange.addEventListener('change', reprocess);
+  featherRange.addEventListener('change', reprocess);
+  $('contiguousCheck').addEventListener('change', reprocess);
+  $('perImageColor').addEventListener('change', reprocess);
+
+  // Click the preview to sample a new key colour from the ORIGINAL pixels.
+  $('previewFrame').addEventListener('click', (e) => {
+    const item = queue.selected;
+    if (!item || !item.pixels) return;
+    const img = $('previewImg');
+    const rect = img.getBoundingClientRect();
+    if (e.clientX < rect.left || e.clientX > rect.right ||
+        e.clientY < rect.top || e.clientY > rect.bottom) return;
+    const x = Math.floor(((e.clientX - rect.left) / rect.width) * item.pixels.width);
+    const y = Math.floor(((e.clientY - rect.top) / rect.height) * item.pixels.height);
+    const i = (y * item.pixels.width + x) * 4;
+    picked = { r: item.pixels.data[i], g: item.pixels.data[i + 1], b: item.pixels.data[i + 2] };
+    item.manualColor = true;
+    paintSwatch();
+    reprocess();
+  });
+
+  $('resetBtn').addEventListener('click', () => {
+    $('fileInput').value = '';
+    queue.clear();
+  });
+
+  paintSwatch();
+})();
+</script>
+</body>
+</html>

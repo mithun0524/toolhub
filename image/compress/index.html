@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Image Compressor — Compress JPG, PNG &amp; WebP In Your Browser | ToolBox</title>
+  <meta name="description" content="Compress JPG, PNG and WebP images for free with a live before/after preview. Batch compress many files at once. Nothing is uploaded — it all runs in your browser."/>
+  <link rel="canonical" href="./"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Image Compressor — private, batch, browser-based"/>
+  <meta property="og:description" content="Shrink JPG, PNG and WebP files with a quality slider and before/after compare. No uploads."/>
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <script src="../../js/theme.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="logo" aria-label="ToolBox home">
+      <span class="logo-icon"><img src="../../assets/logo-icon.svg" alt="" width="16" height="16"/></span>
+      ToolBox
+    </a>
+    <div class="nav-links">
+      <a href="../../index.html#image" class="active">Image</a>
+      <a href="../../index.html#pdf">PDF</a>
+      <a href="../../index.html#text">Text</a>
+      <a href="../../index.html#calculators">Calculators</a>
+      <a href="../../index.html#developer">Developer</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrapper container" id="main">
+  <header class="tool-page-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a> <span class="breadcrumb-sep">/</span>
+      <a href="../../index.html#image">Image Tools</a> <span class="breadcrumb-sep">/</span>
+      <span aria-current="page">Image Compressor</span>
+    </nav>
+    <h1 class="tool-page-title">Image Compressor</h1>
+    <p class="tool-page-desc">Drop in JPG, PNG or WebP files and shrink them with a quality slider. Compare before and after side by side, then download one file or the whole batch.</p>
+    <div class="tool-badges">
+      <span class="badge">Runs on your device</span>
+      <span class="badge">Batch compress</span>
+      <span class="badge">Before / after compare</span>
+    </div>
+  </header>
+
+  <div class="tool-panel">
+    <div class="drop-zone" id="dropZone" aria-label="Choose images to compress">
+      <svg class="drop-zone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+      <p class="drop-zone-text">Drop images here, or click to choose</p>
+      <p class="drop-zone-sub">JPG, PNG, WebP · multiple files · paste from clipboard works too</p>
+      <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple/>
+    </div>
+
+    <div id="workspace" hidden>
+      <div class="panel-split" style="margin-top:22px">
+        <div>
+          <p class="panel-title">Settings</p>
+
+          <div class="input-group">
+            <label class="input-label" for="qualityRange">Quality</label>
+            <div class="range-wrap">
+              <input type="range" id="qualityRange" min="30" max="95" step="1" value="75"/>
+              <span class="range-val" id="qualityVal">75%</span>
+            </div>
+            <p class="input-hint" id="qualityHint">Good balance for photos. Below 50% gets visibly soft.</p>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="formatSelect">Output format</label>
+            <select class="input-field" id="formatSelect">
+              <option value="auto">Auto — keep original, PNG → WebP</option>
+              <option value="image/jpeg">JPEG (smallest for photos)</option>
+              <option value="image/webp">WebP (best all-round)</option>
+              <option value="image/png">PNG (lossless, keeps transparency)</option>
+            </select>
+            <p class="input-hint" id="formatHint">PNG is lossless, so the quality slider does not apply to it.</p>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label" for="maxWidth">Also cap width (optional)</label>
+            <div class="input-suffix">
+              <input type="number" class="input-field" id="maxWidth" min="16" max="20000" placeholder="e.g. 1920"/>
+              <span class="suffix">px</span>
+            </div>
+            <p class="input-hint">Resizing down is usually the biggest single saving.</p>
+          </div>
+
+          <div class="btn-group" style="margin-top:18px">
+            <button class="btn btn-primary" id="compressBtn">Compress</button>
+            <button class="btn btn-secondary" id="addMoreBtn">Add files</button>
+            <button class="btn btn-ghost btn-sm" id="resetBtn">Clear all</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="stat-cards" style="margin-bottom:16px">
+            <div class="stat-card"><div class="stat-card-val" id="totalOrig">–</div><div class="stat-card-label">Original total</div></div>
+            <div class="stat-card"><div class="stat-card-val" id="totalNew">–</div><div class="stat-card-label">Compressed total</div></div>
+            <div class="stat-card highlight"><div class="stat-card-val good" id="totalSaved">–</div><div class="stat-card-label">Saved</div></div>
+          </div>
+
+          <div id="compareWrap" hidden>
+            <p class="panel-title">Before / after — drag the handle</p>
+            <div class="compare" id="compare">
+              <img id="beforeImg" alt="Original image"/>
+              <div class="after-pane" id="afterPane"><img id="afterImg" alt="Compressed image"/></div>
+              <div class="compare-handle" id="compareHandle"></div>
+              <input type="range" id="compareRange" min="0" max="100" value="50" aria-label="Compare before and after"/>
+              <span class="compare-tag left">Original</span>
+              <span class="compare-tag right">Compressed</span>
+            </div>
+          </div>
+
+          <p class="panel-title" style="margin-top:18px">Files (<span id="fileCount">0</span>)</p>
+          <ul class="file-list" id="fileList"></ul>
+
+          <div class="btn-group" style="margin-top:16px">
+            <button class="btn btn-success" id="downloadAllBtn" disabled>Download</button>
+          </div>
+          <p class="input-hint">Two or more files are saved as a single ZIP.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="related" data-tool="img-compress"></div>
+
+  <section class="faq-section">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <button class="faq-q">Are my images uploaded anywhere?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>No. Compression happens in your browser with an HTML5 canvas, so the image data never leaves your device. You can even disconnect from the internet after the page loads and it still works.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Why does compressing a PNG sometimes make it bigger?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>PNG is a lossless format, so the quality slider cannot discard detail the way JPEG does — and browsers re-encode PNG with generic settings that may beat or lose to the original. That is why the default “Auto” mode converts PNG to WebP, which is lossy and usually 60–80% smaller. If the result ever comes out larger, this tool keeps your original file instead.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Which quality setting should I use?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>75–85% is indistinguishable from the original for most photos on the web. Drop to 60% for thumbnails and background images. Below 50% JPEG artefacts become visible around sharp edges and text.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Is any metadata removed?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Yes. Re-encoding through a canvas drops EXIF data such as GPS coordinates, camera model and timestamps, which both shrinks the file and removes personal information before you publish it.</div></div>
+    </div>
+  </section>
+</div>
+
+<footer data-auto></footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {"@type":"SoftwareApplication","name":"Image Compressor","applicationCategory":"MultimediaApplication","operatingSystem":"Any browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Browser-based batch image compressor for JPG, PNG and WebP with before/after comparison."},
+    {"@type":"FAQPage","mainEntity":[
+      {"@type":"Question","name":"Are my images uploaded anywhere?","acceptedAnswer":{"@type":"Answer","text":"No. Compression happens in your browser with an HTML5 canvas, so image data never leaves your device."}},
+      {"@type":"Question","name":"Why does compressing a PNG sometimes make it bigger?","acceptedAnswer":{"@type":"Answer","text":"PNG is lossless, so a quality slider cannot discard detail. Auto mode converts PNG to WebP, which is usually 60-80% smaller, and the original is kept if the result would be larger."}},
+      {"@type":"Question","name":"Which quality setting should I use?","acceptedAnswer":{"@type":"Answer","text":"75-85% looks identical to the original for most web photos. Use 60% for thumbnails. Below 50% artefacts become visible."}}
+    ]}
+  ]
+}
+</script>
+
+<script src="../../js/tools-core.js"></script>
+<script src="../../js/main.js"></script>
+<script src="../../js/image-batch.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const qualityRange = $('qualityRange'), formatSelect = $('formatSelect'), maxWidth = $('maxWidth');
+  const compareWrap = $('compareWrap'), compareRange = $('compareRange');
+
+  const queue = createImageQueue({
+    listEl: $('fileList'),
+    countEl: $('fileCount'),
+    accept: ['image/jpeg', 'image/png', 'image/webp'],
+    processBtn: $('compressBtn'),
+    downloadAllBtn: $('downloadAllBtn'),
+    busyLabel: 'Compressing…',
+    zipName: 'compressed-images.zip',
+    statEls: { orig: $('totalOrig'), out: $('totalNew'), saved: $('totalSaved') },
+    process: compressItem,
+    onSelect: updateCompare,
+    onChange: (q) => {
+      $('workspace').hidden = q.items.length === 0;
+      if (!q.items.length) {
+        compareWrap.hidden = true;
+        $('dropZone').querySelector('.drop-zone-text').textContent = 'Drop images here, or click to choose';
+      }
+    }
+  });
+
+  initDropZone($('dropZone'), $('fileInput'), async (files) => {
+    if (!(await queue.add(files))) return;
+    $('workspace').hidden = false;
+    $('dropZone').querySelector('.drop-zone-text').textContent = 'Drop more images here';
+    queue.render();
+    await queue.processAll();
+    updateCompare(queue.selected);
+  });
+  $('addMoreBtn').addEventListener('click', () => $('fileInput').click());
+
+  function targetType(file) {
+    const chosen = formatSelect.value;
+    if (chosen !== 'auto') return chosen;
+    // Auto: PNG has no lossy knob, so route it to WebP where that is supported.
+    if (file.type === 'image/png') return encoderSupport['image/webp'] ? 'image/webp' : 'image/png';
+    return file.type;
+  }
+
+  async function compressItem(item) {
+    const type = targetType(item.file);
+    const quality = type === 'image/png' ? undefined : +qualityRange.value / 100;
+    const cap = parseInt(maxWidth.value, 10);
+    let w = item.img.naturalWidth, h = item.img.naturalHeight;
+    let note = '';
+    if (cap && cap > 0 && w > cap) {
+      h = Math.round(h * (cap / w)); w = cap;
+      note = 'resized to ' + w + '×' + h;
+    }
+    // JPEG has no alpha: flatten onto white so transparency doesn't turn black.
+    const canvas = drawToCanvas(item.img, w, h, type === 'image/jpeg' ? '#ffffff' : null);
+    const blob = await canvasToBlob(canvas, type, quality);
+
+    // Never hand back something bigger than what the user already had.
+    if (blob.size >= item.file.size && type === item.file.type && !note) {
+      return { blob: item.file, name: item.file.name, keptOriginal: true };
+    }
+    return {
+      blob,
+      name: withExtension('compressed-' + item.file.name, blob.type),
+      note
+    };
+  }
+
+  const reprocess = async () => {
+    await queue.processAll();
+    updateCompare(queue.selected);
+  };
+
+  qualityRange.addEventListener('input', () => {
+    const q = +qualityRange.value;
+    $('qualityVal').textContent = q + '%';
+    $('qualityHint').textContent = q >= 85 ? 'Near-original quality; savings are smaller.'
+      : q >= 65 ? 'Good balance for photos. Below 50% gets visibly soft.'
+      : q >= 50 ? 'Noticeably softer — fine for thumbnails.'
+      : 'Heavy artefacts around edges and text.';
+  });
+  qualityRange.addEventListener('change', reprocess);
+  formatSelect.addEventListener('change', () => {
+    const png = formatSelect.value === 'image/png';
+    qualityRange.disabled = png;
+    $('formatHint').textContent = png
+      ? 'PNG is lossless: the quality slider is ignored, but a width cap still helps.'
+      : 'PNG is lossless, so the quality slider does not apply to it.';
+    reprocess();
+  });
+  maxWidth.addEventListener('change', reprocess);
+
+  $('resetBtn').addEventListener('click', () => {
+    $('fileInput').value = '';
+    queue.clear();
+  });
+
+  /* before/after compare */
+  let afterUrl = null;
+  function updateCompare(item) {
+    if (!item || !item.blob) { compareWrap.hidden = true; return; }
+    compareWrap.hidden = false;
+    $('beforeImg').src = item.img.src;
+    if (afterUrl) URL.revokeObjectURL(afterUrl);
+    afterUrl = URL.createObjectURL(item.blob);
+    $('afterImg').src = afterUrl;
+    setSplit(compareRange.value);
+  }
+  function setSplit(v) {
+    $('afterPane').style.clipPath = `inset(0 0 0 ${v}%)`;
+    $('compareHandle').style.left = v + '%';
+  }
+  compareRange.addEventListener('input', () => setSplit(compareRange.value));
+  setSplit(50);
+
+  // Hook for test/browser.js: build the zip without triggering a download.
+  window.__zipForTest = async () => {
+    const JSZipLib = await new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+      s.onload = () => resolve(window.JSZip);
+      s.onerror = () => reject(new Error('zip load failed'));
+      if (window.JSZip) resolve(window.JSZip); else document.head.appendChild(s);
+    });
+    const zip = new JSZipLib();
+    queue.items.filter((i) => i.blob).forEach((i) => zip.file(i.name, i.blob));
+    const blob = await zip.generateAsync({ type: 'blob' });
+    return { size: blob.size, files: Object.keys(zip.files).length };
+  };
+})();
+</script>
+</body>
+</html>

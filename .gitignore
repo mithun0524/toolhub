@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# graphify: derived artefacts, regenerated with `graphify update .`
+graphify-out/cache/
+js/graphify-out/
+
+# editors / logs
+.vscode/
+.idea/
+*.log

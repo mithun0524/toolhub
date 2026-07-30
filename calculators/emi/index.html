@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EMI Calculator — Loan EMI, Interest &amp; Amortisation Schedule | ToolBox</title>
+  <meta name="description" content="Calculate monthly EMI for home, car and personal loans, see total interest, and read the full amortisation schedule year by year or month by month. Export to CSV."/>
+  <link rel="canonical" href="./"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="EMI Calculator with full amortisation schedule"/>
+  <meta property="og:description" content="Monthly EMI, total interest and a complete repayment schedule you can export."/>
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <script src="../../js/theme.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="logo" aria-label="ToolBox home">
+      <span class="logo-icon"><img src="../../assets/logo-icon.svg" alt="" width="16" height="16"/></span>
+      ToolBox
+    </a>
+    <div class="nav-links">
+      <a href="../../index.html#image">Image</a>
+      <a href="../../index.html#pdf">PDF</a>
+      <a href="../../index.html#text">Text</a>
+      <a href="../../index.html#calculators" class="active">Calculators</a>
+      <a href="../../index.html#developer">Developer</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrapper container" id="main">
+  <header class="tool-page-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a> <span class="breadcrumb-sep">/</span>
+      <a href="../../index.html#calculators">Calculators</a> <span class="breadcrumb-sep">/</span>
+      <span aria-current="page">EMI Calculator</span>
+    </nav>
+    <h1 class="tool-page-title">EMI Calculator</h1>
+    <p class="tool-page-desc">Work out the monthly instalment on a home, car or personal loan, then read the full repayment schedule — including how much of each payment is interest rather than principal.</p>
+    <div class="tool-badges">
+      <span class="badge">Full amortisation schedule</span>
+      <span class="badge">CSV export</span>
+      <span class="badge">Shareable link</span>
+    </div>
+  </header>
+
+  <div class="tool-panel">
+    <div class="panel-split">
+      <div>
+        <p class="panel-title">Loan details</p>
+
+        <div class="input-group">
+          <label class="input-label" for="loanAmount">Loan amount</label>
+          <input type="number" class="input-field" id="loanAmount" value="1000000" min="1" step="any"/>
+          <div class="range-wrap" style="margin-top:8px">
+            <input type="range" id="loanAmountRange" min="10000" max="20000000" step="10000" value="1000000" aria-label="Loan amount slider"/>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="interestRate">Interest rate (% per year)</label>
+          <input type="number" class="input-field" id="interestRate" value="8.5" min="0" max="60" step="0.05"/>
+          <div class="range-wrap" style="margin-top:8px">
+            <input type="range" id="interestRateRange" min="0" max="24" step="0.05" value="8.5" aria-label="Interest rate slider"/>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="input-group">
+            <label class="input-label" for="tenureValue">Tenure</label>
+            <input type="number" class="input-field" id="tenureValue" value="15" min="1" max="600"/>
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="tenureUnit">Unit</label>
+            <select class="input-field" id="tenureUnit">
+              <option value="years">Years</option>
+              <option value="months">Months</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="currencySelect">Currency</label>
+          <select class="input-field" id="currencySelect">
+            <option value="INR">₹ Indian Rupee</option>
+            <option value="USD">$ US Dollar</option>
+            <option value="EUR">€ Euro</option>
+            <option value="GBP">£ Pound Sterling</option>
+            <option value="AED">AED Dirham</option>
+          </select>
+        </div>
+
+        <div class="result-box error" id="errorBox" hidden><pre id="errorMsg"></pre></div>
+      </div>
+
+      <div>
+        <div class="stat-cards">
+          <div class="stat-card highlight"><div class="stat-card-val" id="monthlyEmi">–</div><div class="stat-card-label">Monthly EMI</div></div>
+          <div class="stat-card"><div class="stat-card-val" id="totalInterest">–</div><div class="stat-card-label">Total interest</div></div>
+          <div class="stat-card"><div class="stat-card-val" id="totalPayment">–</div><div class="stat-card-label">Total payable</div></div>
+          <div class="stat-card"><div class="stat-card-val" id="interestShare">–</div><div class="stat-card-label">Interest share</div></div>
+        </div>
+
+        <div style="margin-top:16px">
+          <p class="panel-title">Principal vs interest</p>
+          <div style="display:flex;height:12px;border-radius:99px;overflow:hidden;border:1px solid var(--border)">
+            <span id="barPrincipal" style="background:var(--accent);display:block"></span>
+            <span id="barInterest" style="background:var(--warning);display:block"></span>
+          </div>
+          <p class="input-hint" id="barLegend"></p>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:20px">
+          <p class="panel-title" style="margin:0">Repayment schedule</p>
+          <div class="segmented" role="group" aria-label="Schedule view">
+            <button data-view="yearly" aria-pressed="true">Yearly</button>
+            <button data-view="monthly" aria-pressed="false">Monthly</button>
+          </div>
+        </div>
+
+        <div class="table-wrap" style="margin-top:10px;max-height:420px;overflow:auto">
+          <table class="data-table">
+            <thead><tr>
+              <th id="periodHead">Year</th><th>Principal</th><th>Interest</th><th>Payment</th><th>Balance</th>
+            </tr></thead>
+            <tbody id="scheduleBody"></tbody>
+          </table>
+        </div>
+
+        <div class="btn-group" style="margin-top:14px">
+          <button class="btn btn-secondary btn-sm" id="csvBtn">Download CSV</button>
+          <button class="copy-btn" id="shareBtn">Copy shareable link</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="related" data-tool="calc-emi"></div>
+
+  <section class="faq-section">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <button class="faq-q">What formula is used?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>The standard reducing-balance EMI formula: <code>EMI = P × r × (1+r)^n / ((1+r)^n − 1)</code>, where P is the principal, r the monthly rate (annual rate ÷ 12 ÷ 100) and n the number of months. A 0% loan is handled separately as simply P ÷ n, because the formula divides by zero at that rate.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Why is so much of my early EMI interest?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Interest is charged on the outstanding balance, which is highest at the start. The instalment stays flat, so early payments are mostly interest and later ones mostly principal. The monthly schedule above shows the exact crossover point for your loan.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Does this include processing fees or insurance?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>No. It calculates the pure loan instalment. Lenders often add one-off processing fees, insurance premiums or GST on charges, so your actual outgo can be slightly higher — ask for the annual percentage rate to compare offers fairly.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Does a floating rate change these numbers?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Yes. The schedule assumes your rate stays fixed for the whole tenure. On a floating-rate loan, each rate revision changes either your EMI or your remaining tenure — recalculate with the new rate whenever it moves.</div></div>
+    </div>
+  </section>
+</div>
+
+<footer data-auto></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"SoftwareApplication","name":"EMI Calculator","applicationCategory":"FinanceApplication","operatingSystem":"Any browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Loan EMI calculator with total interest and a full amortisation schedule."},
+ {"@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"What formula is used?","acceptedAnswer":{"@type":"Answer","text":"The reducing-balance formula EMI = P x r x (1+r)^n / ((1+r)^n - 1), with 0% loans handled as principal divided by months."}},
+  {"@type":"Question","name":"Why is so much of my early EMI interest?","acceptedAnswer":{"@type":"Answer","text":"Interest is charged on the outstanding balance, which is highest at the start, so early instalments are mostly interest."}}
+ ]}]}
+</script>
+
+<script src="../../js/tools-core.js"></script>
+<script src="../../js/main.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const T = window.ToolCore;
+  let view = 'yearly';
+  let current = null;
+
+  const pairs = [['loanAmount', 'loanAmountRange'], ['interestRate', 'interestRateRange']];
+  pairs.forEach(([numId, rangeId]) => {
+    const num = $(numId), range = $(rangeId);
+    num.addEventListener('input', () => {
+      if (+num.value >= +range.min && +num.value <= +range.max) range.value = num.value;
+      calculate();
+    });
+    range.addEventListener('input', () => { num.value = range.value; calculate(); });
+  });
+  ['tenureValue', 'tenureUnit', 'currencySelect'].forEach((id) => {
+    $(id).addEventListener('input', calculate);
+    $(id).addEventListener('change', calculate);
+  });
+
+  document.querySelectorAll('[data-view]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      view = btn.dataset.view;
+      document.querySelectorAll('[data-view]').forEach((b) =>
+        b.setAttribute('aria-pressed', String(b === btn)));
+      $('periodHead').textContent = view === 'yearly' ? 'Year' : 'Month';
+      renderSchedule();
+    });
+  });
+
+  function months() {
+    const v = parseFloat($('tenureValue').value) || 0;
+    return Math.round($('tenureUnit').value === 'years' ? v * 12 : v);
+  }
+
+  function error(msg) {
+    $('errorBox').hidden = !msg;
+    if (msg) $('errorMsg').textContent = msg;
+  }
+
+  function calculate() {
+    window.CURRENCY = $('currencySelect').value;
+    const P = parseFloat($('loanAmount').value);
+    const rate = parseFloat($('interestRate').value);
+    const n = months();
+
+    if (!(P > 0)) return error('Enter a loan amount greater than zero.');
+    if (!(n > 0)) return error('Enter a tenure of at least one month.');
+    if (!(rate >= 0)) return error('Interest rate cannot be negative.');
+    if (n > 600) return error('Tenure above 50 years is not realistic — reduce it.');
+    error('');
+
+    current = T.amortization(P, rate, n);
+    const s = current.summary;
+
+    $('monthlyEmi').textContent = formatCurrency(s.monthly);
+    $('totalInterest').textContent = formatCurrency(s.interest);
+    $('totalPayment').textContent = formatCurrency(s.total);
+    const share = s.total ? (s.interest / s.total) * 100 : 0;
+    $('interestShare').textContent = share.toFixed(1) + '%';
+
+    $('barPrincipal').style.width = (100 - share) + '%';
+    $('barInterest').style.width = share + '%';
+    $('barLegend').textContent =
+      `Principal ${formatCurrency(s.principal)} (${(100 - share).toFixed(1)}%) · ` +
+      `Interest ${formatCurrency(s.interest)} (${share.toFixed(1)}%)`;
+
+    renderSchedule();
+  }
+
+  function renderSchedule() {
+    if (!current) return;
+    const rows = view === 'yearly' ? T.yearlyRollup(current.rows) : current.rows;
+    $('scheduleBody').innerHTML = rows.map((r) =>
+      '<tr>' +
+      `<td>${view === 'yearly' ? 'Year ' + r.year : r.month}</td>` +
+      `<td>${formatCurrency(r.principal)}</td>` +
+      `<td>${formatCurrency(r.interest)}</td>` +
+      `<td>${formatCurrency(r.payment)}</td>` +
+      `<td>${formatCurrency(r.balance)}</td>` +
+      '</tr>').join('');
+  }
+
+  $('csvBtn').addEventListener('click', () => {
+    if (!current) return;
+    const rows = view === 'yearly' ? T.yearlyRollup(current.rows) : current.rows;
+    const header = (view === 'yearly' ? 'Year' : 'Month') + ',Principal,Interest,Payment,Balance\n';
+    const body = rows.map((r) => [
+      view === 'yearly' ? r.year : r.month,
+      r.principal.toFixed(2), r.interest.toFixed(2), r.payment.toFixed(2), r.balance.toFixed(2)
+    ].join(',')).join('\n');
+    downloadFile(header + body, 'emi-schedule.csv', 'text/csv;charset=utf-8');
+  });
+
+  $('shareBtn').addEventListener('click', () => {
+    const params = new URLSearchParams({
+      amount: $('loanAmount').value, rate: $('interestRate').value,
+      tenure: $('tenureValue').value, unit: $('tenureUnit').value,
+      currency: $('currencySelect').value
+    });
+    copyToClipboard(location.origin + location.pathname + '?' + params, $('shareBtn'));
+  });
+
+  // Restore state from a shared link.
+  const q = new URLSearchParams(location.search);
+  if (q.get('amount')) $('loanAmount').value = q.get('amount');
+  if (q.get('rate')) $('interestRate').value = q.get('rate');
+  if (q.get('tenure')) $('tenureValue').value = q.get('tenure');
+  if (q.get('unit')) $('tenureUnit').value = q.get('unit');
+  if (q.get('currency')) $('currencySelect').value = q.get('currency');
+  pairs.forEach(([numId, rangeId]) => {
+    const num = $(numId), range = $(rangeId);
+    if (+num.value >= +range.min && +num.value <= +range.max) range.value = num.value;
+  });
+
+  calculate();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Base64 Encoder &amp; Decoder — Unicode Safe, URL Safe, Files | ToolBox</title>
+  <meta name="description" content="Encode text to Base64 or decode Base64 back to text, with full Unicode and emoji support, URL-safe output, and file-to-data-URI encoding. Everything runs in your browser."/>
+  <link rel="canonical" href="./"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Base64 Encoder & Decoder — Unicode and URL safe"/>
+  <meta property="og:description" content="Convert text and files to Base64 locally, with correct UTF-8 handling."/>
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <script src="../../js/theme.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="logo" aria-label="ToolBox home">
+      <span class="logo-icon"><img src="../../assets/logo-icon.svg" alt="" width="16" height="16"/></span>
+      ToolBox
+    </a>
+    <div class="nav-links">
+      <a href="../../index.html#image">Image</a>
+      <a href="../../index.html#pdf">PDF</a>
+      <a href="../../index.html#text">Text</a>
+      <a href="../../index.html#calculators">Calculators</a>
+      <a href="../../index.html#developer" class="active">Developer</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrapper container" id="main">
+  <header class="tool-page-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a> <span class="breadcrumb-sep">/</span>
+      <a href="../../index.html#developer">Developer Tools</a> <span class="breadcrumb-sep">/</span>
+      <span aria-current="page">Base64 Encoder / Decoder</span>
+    </nav>
+    <h1 class="tool-page-title">Base64 Encoder &amp; Decoder</h1>
+    <p class="tool-page-desc">Converts as you type, in both directions. Handles accents, CJK and emoji correctly via UTF-8, supports URL-safe output, and can turn a file into a data URI.</p>
+    <div class="tool-badges">
+      <span class="badge">Unicode &amp; emoji safe</span>
+      <span class="badge">URL-safe mode</span>
+      <span class="badge">File → data URI</span>
+    </div>
+  </header>
+
+  <div class="tool-panel">
+    <div class="input-group">
+      <div class="segmented" role="group" aria-label="Direction">
+        <button data-mode="encode" aria-pressed="true">Text → Base64</button>
+        <button data-mode="decode" aria-pressed="false">Base64 → Text</button>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="input-group">
+        <label class="input-label" for="inputArea"><span id="inputLabel">Plain text</span></label>
+        <textarea class="input-field mono" id="inputArea" rows="9" spellcheck="false" placeholder="Type or paste here — conversion is instant."></textarea>
+        <p class="input-hint" id="inputMeta">0 characters</p>
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="outputArea"><span id="outputLabel">Base64</span></label>
+        <textarea class="input-field mono" id="outputArea" rows="9" readonly></textarea>
+        <p class="input-hint" id="outputMeta">0 characters</p>
+      </div>
+    </div>
+
+    <div class="btn-group" style="margin-bottom:10px">
+      <button class="copy-btn" id="copyBtn">Copy output</button>
+      <button class="btn btn-secondary btn-sm" id="swapBtn">Move output to input</button>
+      <button class="btn btn-secondary btn-sm" id="downloadBtn">Download output</button>
+      <button class="btn btn-danger btn-sm" id="clearBtn">Clear</button>
+    </div>
+
+    <div class="btn-group">
+      <label class="check-row" for="urlSafe"><input type="checkbox" id="urlSafe"/> URL-safe output (<code>-_</code> instead of <code>+/</code>, no padding)</label>
+    </div>
+
+    <div class="result-box" id="statusBox" hidden><pre id="statusMsg"></pre></div>
+
+    <div style="margin-top:22px;padding-top:20px;border-top:1px solid var(--border)">
+      <p class="panel-title">Encode a file as a data URI</p>
+      <div class="drop-zone" id="dropZone" aria-label="Choose a file to encode as Base64">
+        <svg class="drop-zone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+        <p class="drop-zone-text">Drop a file here, or click to choose</p>
+        <p class="drop-zone-sub">Images, fonts, PDFs — anything under 2 MB</p>
+        <input type="file" id="fileInput"/>
+      </div>
+      <div id="fileResult" hidden style="margin-top:14px">
+        <label class="input-label" for="fileOutput">Data URI</label>
+        <textarea class="input-field mono" id="fileOutput" rows="5" readonly></textarea>
+        <div class="btn-group" style="margin-top:8px">
+          <button class="copy-btn" id="copyFileBtn">Copy data URI</button>
+          <span class="badge" id="fileMeta"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="related" data-tool="dev-b64"></div>
+
+  <section class="faq-section">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <button class="faq-q">Why do other tools mangle emoji and accents?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Because they call <code>btoa()</code> directly, which only accepts characters below code point 256 and throws or corrupts anything else. This tool converts your text to UTF-8 bytes first with <code>TextEncoder</code>, so “héllo 🚀” round-trips exactly.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Is Base64 encryption?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>No — it is an encoding, not a cipher. Anyone can decode it in one step with no key, so never use it to hide passwords or tokens. Its purpose is safely carrying binary data through text-only channels such as JSON, email and data URIs.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What is URL-safe Base64?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>A variant (RFC 4648 §5) that replaces <code>+</code> with <code>-</code> and <code>/</code> with <code>_</code> and drops the <code>=</code> padding, so the result survives being put in a URL or filename. JWTs use it. The decoder here accepts both variants automatically.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Why is my Base64 file bigger than the original?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Base64 represents 3 bytes as 4 characters, so it always adds about 33%. That overhead is the price of inlining an asset — worth it for a small icon that saves a network request, wasteful for a large photo.</div></div>
+    </div>
+  </section>
+</div>
+
+<footer data-auto></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"SoftwareApplication","name":"Base64 Encoder and Decoder","applicationCategory":"DeveloperApplication","operatingSystem":"Any browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Unicode-safe Base64 encoding and decoding with URL-safe mode and file data URIs."},
+ {"@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"Is Base64 encryption?","acceptedAnswer":{"@type":"Answer","text":"No. It is an encoding anyone can reverse without a key; use it for transport, never to hide secrets."}},
+  {"@type":"Question","name":"What is URL-safe Base64?","acceptedAnswer":{"@type":"Answer","text":"An RFC 4648 variant using - and _ instead of + and / with no padding, so the value is safe in URLs and filenames."}}
+ ]}]}
+</script>
+
+<script src="../../js/tools-core.js"></script>
+<script src="../../js/main.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const T = window.ToolCore;
+  const inputArea = $('inputArea'), outputArea = $('outputArea');
+  let mode = 'encode';
+
+  function status(msg, kind) {
+    const box = $('statusBox');
+    box.hidden = !msg;
+    if (msg) { box.className = 'result-box ' + (kind || ''); $('statusMsg').textContent = msg; }
+  }
+
+  function convert() {
+    const text = inputArea.value;
+    $('inputMeta').textContent = text.length + ' characters';
+    if (!text) { outputArea.value = ''; $('outputMeta').textContent = '0 characters'; status(''); return; }
+    try {
+      outputArea.value = mode === 'encode'
+        ? T.b64Encode(text, $('urlSafe').checked)
+        : T.b64Decode(text);
+      const grew = outputArea.value.length - text.length;
+      $('outputMeta').textContent = outputArea.value.length + ' characters' +
+        (mode === 'encode' ? ` (+${Math.round((grew / Math.max(1, text.length)) * 100)}%)` : '');
+      status('');
+    } catch (e) {
+      outputArea.value = '';
+      $('outputMeta').textContent = '0 characters';
+      status(e.message + (mode === 'decode'
+        ? ' — check for stray characters, or switch to “Text → Base64” if you meant to encode.' : ''), 'error');
+    }
+  }
+
+  document.querySelectorAll('[data-mode]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      mode = btn.dataset.mode;
+      document.querySelectorAll('[data-mode]').forEach((b) =>
+        b.setAttribute('aria-pressed', String(b === btn)));
+      const enc = mode === 'encode';
+      $('inputLabel').textContent = enc ? 'Plain text' : 'Base64';
+      $('outputLabel').textContent = enc ? 'Base64' : 'Plain text';
+      inputArea.placeholder = enc
+        ? 'Type or paste here — conversion is instant.'
+        : 'Paste Base64 here — whitespace and missing padding are fine.';
+      convert();
+    });
+  });
+
+  inputArea.addEventListener('input', convert);
+  $('urlSafe').addEventListener('change', convert);
+  $('copyBtn').addEventListener('click', () => copyToClipboard(outputArea.value, $('copyBtn')));
+  $('swapBtn').addEventListener('click', () => {
+    if (!outputArea.value) return showToast('Nothing to move yet', 'warn');
+    inputArea.value = outputArea.value;
+    document.querySelector(`[data-mode="${mode === 'encode' ? 'decode' : 'encode'}"]`).click();
+  });
+  $('downloadBtn').addEventListener('click', () => {
+    if (!outputArea.value) return showToast('Nothing to download', 'warn');
+    downloadFile(outputArea.value, mode === 'encode' ? 'encoded.txt' : 'decoded.txt');
+  });
+  $('clearBtn').addEventListener('click', () => {
+    inputArea.value = ''; convert(); inputArea.focus();
+  });
+
+  /* file → data URI */
+  const MAX_FILE = 2 * 1024 * 1024;
+  initDropZone($('dropZone'), $('fileInput'), (files) => {
+    const file = files[0];
+    if (!file) return;
+    if (file.size > MAX_FILE) {
+      return showToast('File is larger than ' + formatBytes(MAX_FILE), 'error');
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      $('fileOutput').value = reader.result;
+      $('fileMeta').textContent = file.name + ' · ' + formatBytes(file.size) +
+        ' → ' + formatBytes(reader.result.length);
+      $('fileResult').hidden = false;
+    };
+    reader.onerror = () => showToast('Could not read that file', 'error');
+    reader.readAsDataURL(file);
+  });
+  $('copyFileBtn').addEventListener('click', () => copyToClipboard($('fileOutput').value, $('copyFileBtn')));
+
+  convert();
+})();
+</script>
+</body>
+</html>

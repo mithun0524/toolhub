@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Word Counter — Live Word, Character &amp; Reading Time Count | ToolBox</title>
+  <meta name="description" content="Free word counter with live character, sentence and paragraph counts, reading and speaking time, keyword density and platform limits for SEO titles, tweets and meta descriptions."/>
+  <link rel="canonical" href="./"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Word Counter — live counts, reading time, keyword density"/>
+  <meta property="og:description" content="Count words and characters as you type, with keyword density and platform limits."/>
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <script src="../../js/theme.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="logo" aria-label="ToolBox home">
+      <span class="logo-icon"><img src="../../assets/logo-icon.svg" alt="" width="16" height="16"/></span>
+      ToolBox
+    </a>
+    <div class="nav-links">
+      <a href="../../index.html#image">Image</a>
+      <a href="../../index.html#pdf">PDF</a>
+      <a href="../../index.html#text" class="active">Text</a>
+      <a href="../../index.html#calculators">Calculators</a>
+      <a href="../../index.html#developer">Developer</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrapper container" id="main">
+  <header class="tool-page-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a> <span class="breadcrumb-sep">/</span>
+      <a href="../../index.html#text">Text Tools</a> <span class="breadcrumb-sep">/</span>
+      <span aria-current="page">Word Counter</span>
+    </nav>
+    <h1 class="tool-page-title">Word Counter</h1>
+    <p class="tool-page-desc">Counts update as you type — words, characters, sentences, paragraphs, reading and speaking time, plus keyword density and the character limits that matter for SEO and social posts.</p>
+    <div class="tool-badges">
+      <span class="badge">Live counts</span>
+      <span class="badge">Keyword density</span>
+      <span class="badge">Nothing leaves your device</span>
+    </div>
+  </header>
+
+  <div class="tool-panel">
+    <div class="stat-cards" style="margin-bottom:18px">
+      <div class="stat-card highlight"><div class="stat-card-val" id="wordCount">0</div><div class="stat-card-label">Words</div></div>
+      <div class="stat-card"><div class="stat-card-val" id="charCount">0</div><div class="stat-card-label">Characters</div></div>
+      <div class="stat-card"><div class="stat-card-val" id="charNoSpaceCount">0</div><div class="stat-card-label">No spaces</div></div>
+      <div class="stat-card"><div class="stat-card-val" id="sentenceCount">0</div><div class="stat-card-label">Sentences</div></div>
+      <div class="stat-card"><div class="stat-card-val" id="paraCount">0</div><div class="stat-card-label">Paragraphs</div></div>
+      <div class="stat-card"><div class="stat-card-val" id="readTime">0s</div><div class="stat-card-label">Reading time</div></div>
+      <div class="stat-card"><div class="stat-card-val" id="speakTime">0s</div><div class="stat-card-label">Speaking time</div></div>
+    </div>
+
+    <div class="input-group">
+      <label class="visually-hidden" for="textArea">Your text</label>
+      <textarea class="input-field" id="textArea" rows="12" placeholder="Type or paste your text here — everything updates instantly."></textarea>
+    </div>
+
+    <div class="btn-group">
+      <button class="copy-btn" id="copyBtn">Copy text</button>
+      <button class="btn btn-secondary btn-sm" id="downloadBtn">Download .txt</button>
+      <button class="btn btn-secondary btn-sm" id="sampleBtn">Paste sample</button>
+      <button class="btn btn-danger btn-sm" id="clearBtn">Clear</button>
+    </div>
+
+    <div class="grid-2" style="margin-top:24px">
+      <div>
+        <p class="panel-title">Keyword density</p>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Word</th><th>Count</th><th>Share</th></tr></thead>
+            <tbody id="keywordList"></tbody>
+          </table>
+        </div>
+        <p class="input-hint">Common filler words are excluded so the list reflects your actual topic.</p>
+      </div>
+      <div>
+        <p class="panel-title">Platform limits</p>
+        <ul class="file-list" id="limitList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="related" data-tool="txt-words"></div>
+
+  <section class="faq-section">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <button class="faq-q">How is reading time calculated?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Silent reading is estimated at 225 words per minute, the average for adults reading non-technical prose. Speaking time uses 130 words per minute, a comfortable presentation pace — useful when you are writing a talk or a video script.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">How do you count sentences and paragraphs?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>A sentence is a run of text closed by a full stop, question mark, exclamation mark or ellipsis — and trailing text with no punctuation still counts, so a single unpunctuated line reads as one sentence. Paragraphs are blocks separated by a blank line, matching how writers actually structure documents.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Is my text saved or sent anywhere?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>No. Counting happens in JavaScript on this page. Nothing is uploaded, logged or stored, so it is safe to paste confidential drafts.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Why does keyword density matter?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>It is a quick sanity check that your page is actually about what you think it is about. Aim for your main topic appearing naturally — roughly 0.5–2% — rather than stuffing it, which modern search engines treat as a negative signal.</div></div>
+    </div>
+  </section>
+</div>
+
+<footer data-auto></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"SoftwareApplication","name":"Word Counter","applicationCategory":"UtilitiesApplication","operatingSystem":"Any browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Live word, character, sentence and paragraph counter with reading time and keyword density."},
+ {"@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"How is reading time calculated?","acceptedAnswer":{"@type":"Answer","text":"Silent reading is estimated at 225 words per minute and speaking time at 130 words per minute."}},
+  {"@type":"Question","name":"Is my text saved or sent anywhere?","acceptedAnswer":{"@type":"Answer","text":"No. Counting happens in JavaScript on the page; nothing is uploaded, logged or stored."}}
+ ]}]}
+</script>
+
+<script src="../../js/tools-core.js"></script>
+<script src="../../js/main.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const textArea = $('textArea');
+  const T = window.ToolCore;
+
+  const STOP_WORDS = new Set(('the a an and or but if of to in on at for with by from as is are was were be been ' +
+    'being have has had do does did will would shall should can could may might must this that these those it ' +
+    'its their our your my his her they we you i he she them us not no so than then there here what which who').split(' '));
+
+  const LIMITS = [
+    { name: 'SEO title', max: 60 },
+    { name: 'Meta description', max: 160 },
+    { name: 'X / Twitter post', max: 280 },
+    { name: 'LinkedIn post', max: 3000 }
+  ];
+
+  const SAMPLE = 'Writing is thinking made visible. A first draft exists to be wrong in public, ' +
+    'at least to yourself, so that the second draft has something to argue with.\n\n' +
+    'Cut every sentence that is only there to sound clever. What remains is usually shorter, ' +
+    'plainer, and far more convincing than what you started with.';
+
+  function update() {
+    const text = textArea.value;
+    const s = T.textStats(text);
+
+    $('wordCount').textContent = formatNum(s.words);
+    $('charCount').textContent = formatNum(s.chars);
+    $('charNoSpaceCount').textContent = formatNum(s.charsNoSpaces);
+    $('sentenceCount').textContent = formatNum(s.sentences);
+    $('paraCount').textContent = formatNum(s.paragraphs);
+    $('readTime').textContent = T.humanDuration(s.readingSeconds);
+    $('speakTime').textContent = T.humanDuration(s.speakingSeconds);
+
+    const keywords = T.wordFrequency(text, 40)
+      .filter((k) => !STOP_WORDS.has(k.word) && k.word.length > 2)
+      .slice(0, 8);
+    $('keywordList').innerHTML = keywords.length
+      ? keywords.map((k) =>
+        `<tr><td>${k.word}</td><td>${k.count}</td><td>${k.pct.toFixed(1)}%</td></tr>`).join('')
+      : '<tr><td colspan="3" style="text-align:left;color:var(--text-muted)">Start typing to see your most-used words.</td></tr>';
+
+    $('limitList').innerHTML = LIMITS.map((l) => {
+      const over = s.chars > l.max;
+      const left = l.max - s.chars;
+      return '<li class="file-item">' +
+        `<span class="file-name">${l.name}</span>` +
+        `<span class="file-meta" style="color:${over ? 'var(--danger)' : 'var(--text-muted)'}">` +
+        `${over ? Math.abs(left) + ' over' : left + ' left'} · ${l.max}</span></li>`;
+    }).join('');
+  }
+
+  textArea.addEventListener('input', update);
+  $('copyBtn').addEventListener('click', () => copyToClipboard(textArea.value, $('copyBtn')));
+  $('downloadBtn').addEventListener('click', () => {
+    if (!textArea.value) return showToast('Nothing to download', 'warn');
+    downloadFile(textArea.value, 'text.txt', 'text/plain;charset=utf-8');
+  });
+  $('sampleBtn').addEventListener('click', () => { textArea.value = SAMPLE; update(); });
+  $('clearBtn').addEventListener('click', () => { textArea.value = ''; update(); textArea.focus(); });
+
+  update();
+})();
+</script>
+</body>
+</html>

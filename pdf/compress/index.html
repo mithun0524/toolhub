@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Compress PDF — Reduce PDF File Size In Your Browser | ToolBox</title>
+  <meta name="description" content="Compress PDF files for free in your browser. Lossless clean-up keeps text selectable, or re-render pages at a lower DPI to shrink scanned documents by up to 90%."/>
+  <link rel="canonical" href="./"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Compress PDF — private, real size reduction"/>
+  <meta property="og:description" content="Two compression modes: lossless structural clean-up, or page re-rendering for scans. No uploads."/>
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <script src="../../js/theme.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="logo" aria-label="ToolBox home">
+      <span class="logo-icon"><img src="../../assets/logo-icon.svg" alt="" width="16" height="16"/></span>
+      ToolBox
+    </a>
+    <div class="nav-links">
+      <a href="../../index.html#image">Image</a>
+      <a href="../../index.html#pdf" class="active">PDF</a>
+      <a href="../../index.html#text">Text</a>
+      <a href="../../index.html#calculators">Calculators</a>
+      <a href="../../index.html#developer">Developer</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrapper container" id="main">
+  <header class="tool-page-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a> <span class="breadcrumb-sep">/</span>
+      <a href="../../index.html#pdf">PDF Tools</a> <span class="breadcrumb-sep">/</span>
+      <span aria-current="page">PDF Compressor</span>
+    </nav>
+    <h1 class="tool-page-title">Compress PDF</h1>
+    <p class="tool-page-desc">Start with a lossless clean-up that keeps text selectable. If that is not enough — typical for scans and image-heavy decks — switch to re-rendering, which is where the big savings are.</p>
+    <div class="tool-badges">
+      <span class="badge">Lossless or strong</span>
+      <span class="badge">Page-count preserved</span>
+      <span class="badge">Runs on your device</span>
+    </div>
+  </header>
+
+  <div class="tool-panel">
+    <div class="drop-zone" id="dropZone" aria-label="Choose a PDF to compress">
+      <svg class="drop-zone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <p class="drop-zone-text">Drop a PDF here, or click to choose</p>
+      <p class="drop-zone-sub">Single or multi-page documents</p>
+      <input type="file" id="fileInput" accept="application/pdf"/>
+    </div>
+
+    <div id="workspace" hidden>
+      <div class="panel-split" style="margin-top:22px">
+        <div>
+          <p class="panel-title">Mode</p>
+          <div class="segmented" style="margin-bottom:16px" role="group" aria-label="Compression mode">
+            <button id="modeLossless" data-mode="lossless" aria-pressed="true">Lossless</button>
+            <button id="modeStrong" data-mode="strong" aria-pressed="false">Strong (re-render)</button>
+          </div>
+          <p class="input-hint" id="modeHint">Rewrites the file structure and compresses object streams. Text stays selectable; savings are usually 2–20%.</p>
+
+          <div id="strongOptions" hidden style="margin-top:16px">
+            <div class="input-group">
+              <label class="input-label" for="dpiSelect">Page resolution</label>
+              <select class="input-field" id="dpiSelect">
+                <option value="72">72 DPI — screen reading, smallest</option>
+                <option value="110" selected>110 DPI — good balance</option>
+                <option value="150">150 DPI — print-ish</option>
+                <option value="200">200 DPI — high quality</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="jpegQuality">Image quality</label>
+              <div class="range-wrap">
+                <input type="range" id="jpegQuality" min="30" max="95" value="70"/>
+                <span class="range-val" id="jpegQualityVal">70%</span>
+              </div>
+            </div>
+            <div class="result-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <span>Re-rendering turns each page into an image: text is no longer selectable or searchable. Ideal for scans, wrong for contracts you need to copy from.</span>
+            </div>
+          </div>
+
+          <div class="btn-group" style="margin-top:18px">
+            <button class="btn btn-primary" id="compressBtn">Compress</button>
+            <button class="btn btn-ghost btn-sm" id="resetBtn">Start over</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="stat-cards" style="margin-bottom:14px">
+            <div class="stat-card"><div class="stat-card-val" id="origSize">–</div><div class="stat-card-label">Original</div></div>
+            <div class="stat-card"><div class="stat-card-val" id="newSize">–</div><div class="stat-card-label">Compressed</div></div>
+            <div class="stat-card highlight"><div class="stat-card-val good" id="savedPercent">–</div><div class="stat-card-label">Saved</div></div>
+            <div class="stat-card"><div class="stat-card-val" id="pageCount">–</div><div class="stat-card-label">Pages</div></div>
+          </div>
+          <div id="progressBox" class="result-box" hidden><pre id="progressMsg"></pre></div>
+          <div id="statusBox" class="result-box" hidden><pre id="statusMsg"></pre></div>
+          <div class="btn-group" style="margin-top:14px">
+            <button class="btn btn-success" id="downloadBtn" disabled>Download compressed PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="related" data-tool="pdf-compress"></div>
+
+  <section class="faq-section">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <button class="faq-q">Why do some PDFs barely shrink in lossless mode?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Lossless mode only reorganises the file: it compresses object streams, drops duplicate resources and removes slack. If the bulk of your file is already-compressed JPEG scans, there is nothing structural left to squeeze — that is exactly when strong mode helps, because it re-encodes the page images themselves.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Will strong mode make my text unsearchable?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Yes. Each page becomes a flattened image, so text cannot be selected, copied or searched afterwards. Use it for scanned paperwork and image-heavy presentations, and stay on lossless mode for documents whose text you need.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Which resolution should I pick?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>110 DPI looks clean on screens and email. Choose 150–200 DPI if the document will be printed. 72 DPI produces the smallest file and is fine for archiving something you only ever view on a phone.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Is my document uploaded?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>No. Both modes run entirely in your browser using JavaScript PDF libraries, so the document never leaves your device.</div></div>
+    </div>
+  </section>
+</div>
+
+<footer data-auto></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"SoftwareApplication","name":"PDF Compressor","applicationCategory":"UtilitiesApplication","operatingSystem":"Any browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Compress PDFs in the browser, losslessly or by re-rendering pages at a chosen DPI."},
+ {"@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"Why do some PDFs barely shrink in lossless mode?","acceptedAnswer":{"@type":"Answer","text":"Lossless mode only reorganises file structure. If the file is mostly compressed JPEG scans there is nothing structural left to squeeze, so strong mode is needed."}},
+  {"@type":"Question","name":"Will strong mode make my text unsearchable?","acceptedAnswer":{"@type":"Answer","text":"Yes. Each page becomes a flattened image, so text cannot be selected or searched. Use lossless mode for text documents."}}
+ ]}]}
+</script>
+
+<script src="../../js/tools-core.js"></script>
+<script src="../../js/main.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+
+  let file = null, outBytes = null, mode = 'lossless';
+
+  initDropZone($('dropZone'), $('fileInput'), async (files) => {
+    const f = files[0];
+    if (!(f.type === 'application/pdf' || /\.pdf$/i.test(f.name))) {
+      return showToast('That is not a PDF file', 'error');
+    }
+    file = f;
+    outBytes = null;
+    $('origSize').textContent = formatBytes(file.size);
+    $('newSize').textContent = '–';
+    $('savedPercent').textContent = '–';
+    $('downloadBtn').disabled = true;
+    $('statusBox').hidden = true;
+    $('workspace').hidden = false;
+    $('dropZone').querySelector('.drop-zone-text').textContent = 'Drop another PDF to replace it';
+    try {
+      const doc = await PDFLib.PDFDocument.load(await file.arrayBuffer());
+      $('pageCount').textContent = doc.getPageCount();
+    } catch (e) {
+      $('pageCount').textContent = '?';
+      status(/encrypt/i.test(e.message)
+        ? 'This PDF is password protected — remove the password first.'
+        : 'This file could not be read as a PDF.', true);
+    }
+  });
+
+  document.querySelectorAll('.segmented [data-mode]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      mode = btn.dataset.mode;
+      document.querySelectorAll('.segmented [data-mode]').forEach((b) =>
+        b.setAttribute('aria-pressed', String(b === btn)));
+      $('strongOptions').hidden = mode !== 'strong';
+      $('modeHint').textContent = mode === 'strong'
+        ? 'Each page is re-drawn as a JPEG at the chosen resolution. Savings of 50–90% on scans.'
+        : 'Rewrites the file structure and compresses object streams. Text stays selectable; savings are usually 2–20%.';
+    });
+  });
+
+  $('jpegQuality').addEventListener('input', () => {
+    $('jpegQualityVal').textContent = $('jpegQuality').value + '%';
+  });
+
+  function status(msg, isError) {
+    const box = $('statusBox');
+    box.hidden = false;
+    box.className = 'result-box ' + (isError ? 'error' : 'ok');
+    $('statusMsg').textContent = msg;
+  }
+  function progress(msg) {
+    const box = $('progressBox');
+    box.hidden = !msg;
+    if (msg) $('progressMsg').textContent = msg;
+  }
+
+  async function compressLossless(buffer) {
+    const doc = await PDFLib.PDFDocument.load(buffer);
+    return doc.save({ useObjectStreams: true, addDefaultPage: false });
+  }
+
+  async function compressStrong(buffer) {
+    const dpi = +$('dpiSelect').value;
+    const quality = +$('jpegQuality').value / 100;
+    // pdf.js transfers ownership of the buffer, so hand it a copy.
+    const pdf = await pdfjsLib.getDocument({ data: buffer.slice(0) }).promise;
+    const out = await PDFLib.PDFDocument.create();
+
+    for (let n = 1; n <= pdf.numPages; n++) {
+      progress(`Re-rendering page ${n} of ${pdf.numPages}…`);
+      const page = await pdf.getPage(n);
+      const viewport = page.getViewport({ scale: dpi / 72 });
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(viewport.width));
+      canvas.height = Math.max(1, Math.round(viewport.height));
+      const ctx = canvas.getContext('2d');
+      // JPEG has no alpha; paint white so transparent regions are not black.
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      await page.render({ canvasContext: ctx, viewport }).promise;
+
+      const blob = await canvasToBlob(canvas, 'image/jpeg', quality);
+      const jpg = await out.embedJpg(await blob.arrayBuffer());
+      // Keep the original page geometry (72 DPI points), not the render size.
+      const base = page.getViewport({ scale: 1 });
+      const newPage = out.addPage([base.width, base.height]);
+      newPage.drawImage(jpg, { x: 0, y: 0, width: base.width, height: base.height });
+      canvas.width = canvas.height = 0;   // release the bitmap early
+    }
+    progress('');
+    return out.save({ useObjectStreams: true });
+  }
+
+  $('compressBtn').addEventListener('click', async () => {
+    if (!file) return showToast('Choose a PDF first', 'error');
+    const btn = $('compressBtn');
+    setBusy(btn, true, 'Compressing…');
+    try {
+      const buffer = await file.arrayBuffer();
+      outBytes = mode === 'strong' ? await compressStrong(buffer) : await compressLossless(buffer);
+
+      const saved = 1 - outBytes.length / file.size;
+      $('newSize').textContent = formatBytes(outBytes.length);
+      const pctEl = $('savedPercent');
+      pctEl.textContent = saved > 0 ? Math.round(saved * 100) + '%' : '0%';
+      pctEl.classList.toggle('good', saved > 0);
+      $('downloadBtn').disabled = false;
+
+      if (saved <= 0.02 && mode === 'lossless') {
+        status('This PDF is already well optimised — lossless mode saved almost nothing. ' +
+          'If it is a scan, try strong mode for a much bigger reduction.', false);
+      } else if (saved <= 0) {
+        status('The result is not smaller than the original, so keep your original file.', true);
+      } else {
+        status(`Done — ${formatBytes(file.size)} → ${formatBytes(outBytes.length)} ` +
+          `(${Math.round(saved * 100)}% smaller).`, false);
+      }
+    } catch (e) {
+      progress('');
+      status('Compression failed: ' + e.message, true);
+      showToast('Could not compress that PDF', 'error');
+    } finally { setBusy(btn, false); }
+  });
+
+  $('downloadBtn').addEventListener('click', () => {
+    if (outBytes) {
+      downloadFile(outBytes, 'compressed-' + file.name.replace(/\.pdf$/i, '') + '.pdf', 'application/pdf');
+    }
+  });
+
+  $('resetBtn').addEventListener('click', () => {
+    file = null; outBytes = null;
+    $('fileInput').value = '';
+    $('workspace').hidden = true;
+    $('statusBox').hidden = true;
+    progress('');
+    $('dropZone').querySelector('.drop-zone-text').textContent = 'Drop a PDF here, or click to choose';
+  });
+})();
+</script>
+</body>
+</html>

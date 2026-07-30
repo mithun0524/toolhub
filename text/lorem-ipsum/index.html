@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lorem Ipsum Generator — Placeholder Text, Plain Or HTML | ToolBox</title>
+  <meta name="description" content="Generate Lorem Ipsum placeholder text by paragraphs, sentences or words. Real varied output, optional HTML tags, and one-click copy. Free and instant."/>
+  <link rel="canonical" href="./"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Lorem Ipsum Generator — plain text or HTML"/>
+  <meta property="og:description" content="Varied placeholder copy by paragraph, sentence or word, with optional HTML markup."/>
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <script src="../../js/theme.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="logo" aria-label="ToolBox home">
+      <span class="logo-icon"><img src="../../assets/logo-icon.svg" alt="" width="16" height="16"/></span>
+      ToolBox
+    </a>
+    <div class="nav-links">
+      <a href="../../index.html#image">Image</a>
+      <a href="../../index.html#pdf">PDF</a>
+      <a href="../../index.html#text" class="active">Text</a>
+      <a href="../../index.html#calculators">Calculators</a>
+      <a href="../../index.html#developer">Developer</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrapper container" id="main">
+  <header class="tool-page-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a> <span class="breadcrumb-sep">/</span>
+      <a href="../../index.html#text">Text Tools</a> <span class="breadcrumb-sep">/</span>
+      <span aria-current="page">Lorem Ipsum Generator</span>
+    </nav>
+    <h1 class="tool-page-title">Lorem Ipsum Generator</h1>
+    <p class="tool-page-desc">Placeholder copy with genuinely varied sentence lengths — not the same paragraph repeated. Output as plain text or wrapped in HTML tags, ready to paste into a mockup.</p>
+    <div class="tool-badges">
+      <span class="badge">Varied output</span>
+      <span class="badge">Plain or HTML</span>
+      <span class="badge">Instant</span>
+    </div>
+  </header>
+
+  <div class="tool-panel">
+    <div class="panel-split">
+      <div>
+        <p class="panel-title">Options</p>
+        <div class="grid-2">
+          <div class="input-group">
+            <label class="input-label" for="countInput">How many</label>
+            <input type="number" class="input-field" id="countInput" value="3" min="1" max="200"/>
+          </div>
+          <div class="input-group">
+            <label class="input-label" for="unitSelect">Unit</label>
+            <select class="input-field" id="unitSelect">
+              <option value="paragraphs">Paragraphs</option>
+              <option value="sentences">Sentences</option>
+              <option value="words">Words</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="check-row" for="startCheck">
+          <input type="checkbox" id="startCheck" checked/> Start with “Lorem ipsum dolor sit amet”
+        </label>
+
+        <div class="input-group" style="margin-top:12px">
+          <p class="input-label">Output format</p>
+          <div class="segmented" role="group" aria-label="Output format">
+            <button id="plainToggle" aria-pressed="true">Plain text</button>
+            <button id="htmlToggle" aria-pressed="false">HTML</button>
+          </div>
+        </div>
+
+        <div class="btn-group" style="margin-top:14px">
+          <button class="btn btn-primary" id="generateBtn">Generate again</button>
+          <button class="copy-btn" id="copyBtn">Copy</button>
+          <button class="btn btn-secondary btn-sm" id="downloadBtn">Download .txt</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="stat-cards" style="margin-bottom:14px">
+          <div class="stat-card"><div class="stat-card-val" id="wordsOut">0</div><div class="stat-card-label">Words</div></div>
+          <div class="stat-card"><div class="stat-card-val" id="charsOut">0</div><div class="stat-card-label">Characters</div></div>
+        </div>
+        <label class="visually-hidden" for="outputArea">Generated text</label>
+        <textarea class="input-field mono" id="outputArea" rows="14" readonly></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div id="related" data-tool="txt-lorem"></div>
+
+  <section class="faq-section">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <button class="faq-q">What is Lorem Ipsum and why use it?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>It is scrambled Latin derived from Cicero, used as filler since the 1500s. Because it is not readable prose, reviewers judge layout, spacing and typography instead of getting drawn into the copy — which is exactly what you want in a design review.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Why does “Generate again” change the text?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Each run uses a new random seed, so sentence lengths and word order differ. That matters for layout testing: identical repeated paragraphs hide the wrapping and ragged-edge problems real content will cause.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What does HTML mode produce?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Paragraphs come wrapped in <code>&lt;p&gt;</code> tags, ready to paste straight into a template. Words and sentences are wrapped in a single paragraph.</div></div>
+    </div>
+  </section>
+</div>
+
+<footer data-auto></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Lorem Ipsum Generator","applicationCategory":"UtilitiesApplication","operatingSystem":"Any browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Generate varied Lorem Ipsum placeholder text as plain text or HTML."}
+</script>
+
+<script src="../../js/tools-core.js"></script>
+<script src="../../js/main.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const outputArea = $('outputArea');
+  const T = window.ToolCore;
+  let seed = Math.floor(Math.random() * 1e9) || 7;
+  let asHtml = false;
+
+  function generate(newSeed) {
+    if (newSeed) seed = Math.floor(Math.random() * 1e9) || 7;
+    const count = Math.max(1, Math.min(200, parseInt($('countInput').value, 10) || 1));
+    const unit = $('unitSelect').value;
+    const text = T.generateLorem({ count, unit, startWithLorem: $('startCheck').checked, seed });
+
+    outputArea.value = asHtml
+      ? (unit === 'paragraphs'
+        ? text.split('\n\n').map((p) => '<p>' + p + '</p>').join('\n')
+        : '<p>' + text + '</p>')
+      : text;
+
+    const s = T.textStats(outputArea.value);
+    $('wordsOut').textContent = formatNum(s.words);
+    $('charsOut').textContent = formatNum(s.chars);
+  }
+
+  ['countInput', 'startCheck'].forEach((id) => {
+    $(id).addEventListener('input', () => generate(false));
+    $(id).addEventListener('change', () => generate(false));
+  });
+  $('unitSelect').addEventListener('change', () => generate(false));
+  $('generateBtn').addEventListener('click', () => generate(true));
+
+  [['plainToggle', false], ['htmlToggle', true]].forEach(([id, html]) => {
+    $(id).addEventListener('click', () => {
+      asHtml = html;
+      $('plainToggle').setAttribute('aria-pressed', String(!html));
+      $('htmlToggle').setAttribute('aria-pressed', String(html));
+      generate(false);
+    });
+  });
+
+  $('copyBtn').addEventListener('click', () => copyToClipboard(outputArea.value, $('copyBtn')));
+  $('downloadBtn').addEventListener('click', () =>
+    downloadFile(outputArea.value, asHtml ? 'lorem.html' : 'lorem.txt',
+      asHtml ? 'text/html;charset=utf-8' : 'text/plain;charset=utf-8'));
+
+  generate(false);
+})();
+</script>
+</body>
+</html>

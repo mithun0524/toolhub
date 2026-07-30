@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Image Converter — Batch Convert JPG, PNG, WebP &amp; AVIF | ToolBox</title>
+  <meta name="description" content="Convert images between JPG, PNG, WebP and AVIF for free, one file or a whole batch. See the size difference before you download. Conversion happens in your browser."/>
+  <link rel="canonical" href="./"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Image Converter — JPG, PNG, WebP, AVIF"/>
+  <meta property="og:description" content="Batch convert image formats locally with quality control and a live size comparison."/>
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../../css/style.css"/>
+  <script src="../../js/theme.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<nav>
+  <div class="nav-inner">
+    <a href="../../index.html" class="logo" aria-label="ToolBox home">
+      <span class="logo-icon"><img src="../../assets/logo-icon.svg" alt="" width="16" height="16"/></span>
+      ToolBox
+    </a>
+    <div class="nav-links">
+      <a href="../../index.html#image" class="active">Image</a>
+      <a href="../../index.html#pdf">PDF</a>
+      <a href="../../index.html#text">Text</a>
+      <a href="../../index.html#calculators">Calculators</a>
+      <a href="../../index.html#developer">Developer</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrapper container" id="main">
+  <header class="tool-page-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="../../index.html">Home</a> <span class="breadcrumb-sep">/</span>
+      <a href="../../index.html#image">Image Tools</a> <span class="breadcrumb-sep">/</span>
+      <span aria-current="page">Image Converter</span>
+    </nav>
+    <h1 class="tool-page-title">Image Converter</h1>
+    <p class="tool-page-desc">Convert between JPG, PNG, WebP and AVIF — a single file or a whole folder's worth — with quality control, transparency handling and a live size comparison.</p>
+    <div class="tool-badges">
+      <span class="badge">Batch convert</span>
+      <span class="badge">4 formats</span>
+      <span class="badge">Transparency aware</span>
+    </div>
+  </header>
+
+  <div class="tool-panel">
+    <div class="drop-zone" id="dropZone" aria-label="Choose images to convert">
+      <svg class="drop-zone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+      <p class="drop-zone-text">Drop images here, or click to choose</p>
+      <p class="drop-zone-sub">JPG, PNG, WebP, AVIF, GIF, BMP in — JPG, PNG, WebP, AVIF out</p>
+      <input type="file" id="fileInput" accept="image/*" multiple/>
+    </div>
+
+    <div id="workspace" hidden>
+      <div class="panel-split" style="margin-top:22px">
+        <div>
+          <p class="panel-title">Convert to</p>
+          <div class="input-group">
+            <label class="visually-hidden" for="formatSelect">Target format</label>
+            <select class="input-field" id="formatSelect">
+              <option value="image/webp">WebP — best size/quality balance</option>
+              <option value="image/jpeg">JPEG — universal, no transparency</option>
+              <option value="image/png">PNG — lossless, keeps transparency</option>
+              <option value="image/avif">AVIF — smallest, newer browsers</option>
+            </select>
+            <p class="input-hint" id="formatHint"></p>
+          </div>
+
+          <div class="input-group" id="qualityGroup">
+            <label class="input-label" for="qualityRange">Quality</label>
+            <div class="range-wrap">
+              <input type="range" id="qualityRange" min="30" max="100" value="90"/>
+              <span class="range-val" id="qualityVal">90%</span>
+            </div>
+          </div>
+
+          <div class="input-group" id="bgGroup" hidden>
+            <label class="input-label" for="bgColor">Background for transparent areas</label>
+            <input type="color" class="input-field" id="bgColor" value="#ffffff" style="height:40px;padding:4px"/>
+            <p class="input-hint">JPEG has no transparency, so transparent pixels are filled with this colour.</p>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-primary" id="convertBtn">Convert</button>
+            <button class="btn btn-secondary" id="addMoreBtn">Add files</button>
+            <button class="btn btn-ghost btn-sm" id="resetBtn">Clear all</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="stat-cards" style="margin-bottom:16px">
+            <div class="stat-card"><div class="stat-card-val" id="origSize">–</div><div class="stat-card-label">Total before</div></div>
+            <div class="stat-card"><div class="stat-card-val" id="newSize">–</div><div class="stat-card-label">Total after</div></div>
+            <div class="stat-card highlight"><div class="stat-card-val good" id="sizeDelta">–</div><div class="stat-card-label">Difference</div></div>
+          </div>
+
+          <div class="preview-frame"><img id="previewImg" alt="Converted image preview"/></div>
+          <p class="input-hint" style="text-align:center">Selected: <span id="outName">–</span></p>
+
+          <p class="panel-title" style="margin-top:14px">Files (<span id="fileCount">0</span>)</p>
+          <ul class="file-list" id="fileList"></ul>
+
+          <div class="btn-group" style="margin-top:14px">
+            <button class="btn btn-success" id="downloadAllBtn" disabled>Download</button>
+          </div>
+          <p class="input-hint">Two or more files are saved as a single ZIP.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="related" data-tool="img-convert"></div>
+
+  <section class="faq-section">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <button class="faq-q">Which format should I choose?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>WebP is the safe default for the web: it is 25–35% smaller than JPEG at the same quality and every current browser supports it. Use AVIF when you want the smallest possible file and your audience is on recent browsers. Use PNG when you need lossless quality or transparency, and JPEG when a tool or service only accepts it.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What happens to transparency when I convert to JPEG?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>JPEG cannot store transparency, so transparent pixels must be filled with a solid colour. This tool lets you pick that colour — white by default — instead of turning it into unexpected black.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Why is AVIF sometimes unavailable?
+        <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <div class="faq-a"><div>Conversion uses your browser's own encoders. Chrome and Firefox can write AVIF; some Safari versions cannot. The tool detects what your browser supports and disables the rest, instead of silently producing a PNG with the wrong extension.</div></div>
+    </div>
+  </section>
+</div>
+
+<footer data-auto></footer>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Image Converter","applicationCategory":"MultimediaApplication","operatingSystem":"Any browser","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Batch convert images between JPG, PNG, WebP and AVIF locally in the browser."}
+</script>
+
+<script src="../../js/tools-core.js"></script>
+<script src="../../js/main.js"></script>
+<script src="../../js/image-batch.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const formatSelect = $('formatSelect'), qualityRange = $('qualityRange');
+  let previewUrl = null;
+
+  // Hide formats this browser cannot actually encode.
+  [...formatSelect.options].forEach((opt) => {
+    if (!encoderSupport[opt.value]) {
+      opt.disabled = true;
+      opt.textContent += ' — not supported by this browser';
+    }
+  });
+  if (formatSelect.selectedOptions[0].disabled) {
+    const first = [...formatSelect.options].find((o) => !o.disabled);
+    if (first) formatSelect.value = first.value;
+  }
+
+  const queue = createImageQueue({
+    listEl: $('fileList'),
+    countEl: $('fileCount'),
+    processBtn: $('convertBtn'),
+    downloadAllBtn: $('downloadAllBtn'),
+    busyLabel: 'Converting…',
+    zipName: 'converted-images.zip',
+    statEls: { orig: $('origSize'), out: $('newSize'), saved: $('sizeDelta') },
+    process: convertItem,
+    onSelect: showPreview,
+    onChange: (q) => {
+      $('workspace').hidden = q.items.length === 0;
+      if (!q.items.length) {
+        $('outName').textContent = '–';
+        $('previewImg').removeAttribute('src');
+        $('dropZone').querySelector('.drop-zone-text').textContent = 'Drop images here, or click to choose';
+      }
+    }
+  });
+
+  initDropZone($('dropZone'), $('fileInput'), async (files) => {
+    if (!(await queue.add(files))) return;
+    $('workspace').hidden = false;
+    $('dropZone').querySelector('.drop-zone-text').textContent = 'Drop more images here';
+    syncUI();
+    queue.render();
+    await queue.processAll();
+    showPreview(queue.selected);
+  });
+  $('addMoreBtn').addEventListener('click', () => $('fileInput').click());
+
+  function syncUI() {
+    const type = formatSelect.value;
+    $('qualityGroup').hidden = type === 'image/png';
+    $('bgGroup').hidden = type !== 'image/jpeg';
+    $('formatHint').textContent =
+      type === 'image/webp' ? 'Lossy or lossless, keeps transparency, widely supported.'
+      : type === 'image/jpeg' ? 'Smallest for photographs; no transparency support.'
+      : type === 'image/png' ? 'Lossless — quality slider does not apply.'
+      : 'Smallest files, but encoding is slower and support is newer.';
+    const item = queue.selected;
+    if (item) $('outName').textContent = withExtension(item.file.name, type);
+  }
+
+  async function convertItem(item) {
+    const type = formatSelect.value;
+    const canvas = drawToCanvas(item.img, item.img.naturalWidth, item.img.naturalHeight,
+      type === 'image/jpeg' ? $('bgColor').value : null);
+    const blob = await canvasToBlob(canvas, type,
+      type === 'image/png' ? undefined : +qualityRange.value / 100);
+    // An unsupported MIME silently yields PNG — report that instead of lying.
+    if (blob.type !== type) {
+      throw new Error('cannot encode ' + type.replace('image/', '').toUpperCase());
+    }
+    return {
+      blob,
+      name: withExtension(item.file.name, blob.type),
+      note: (item.file.type || 'unknown').replace('image/', '') + ' → ' + type.replace('image/', '')
+    };
+  }
+
+  const reprocess = async () => {
+    syncUI();
+    await queue.processAll();
+    showPreview(queue.selected);
+  };
+
+  formatSelect.addEventListener('change', reprocess);
+  qualityRange.addEventListener('input', () => { $('qualityVal').textContent = qualityRange.value + '%'; });
+  qualityRange.addEventListener('change', reprocess);
+  $('bgColor').addEventListener('change', reprocess);
+
+  function showPreview(item) {
+    if (!item || !item.blob) return;
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    previewUrl = URL.createObjectURL(item.blob);
+    $('previewImg').src = previewUrl;
+    $('outName').textContent = item.name;
+  }
+
+  $('resetBtn').addEventListener('click', () => {
+    $('fileInput').value = '';
+    queue.clear();
+  });
+
+  syncUI();
+})();
+</script>
+</body>
+</html>
