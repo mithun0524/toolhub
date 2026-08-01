@@ -31,7 +31,19 @@ reference sneaking back into a page.
 
 `test/browser.js` launches headless Chrome over the DevTools protocol using Node's
 built-in WebSocket. It fails a page on a console error, a missing element the page
-script depends on, or a failed interaction (upload a file, click, assert the result).
+script depends on, a failed interaction (upload a file, click, assert the result), or
+**horizontal overflow at 390 CSS px** — it re-renders every page at phone width and
+names whatever sticks out. Elements inside an `overflow:auto` box are exempt, since a
+wide data table scrolling in place is correct.
+
+```sh
+node tools/shoot.js http://localhost:8000 390 / /calculators/emi/   # screenshot + diagnose
+```
+
+Both use `Emulation.setDeviceMetricsOverride` rather than `--window-size`, because
+Chrome will not size a window below roughly 500 CSS px on macOS: a narrow
+`--window-size` screenshot renders the page wide and crops it, which looks exactly
+like a broken mobile layout and hides real ones.
 
 ## Layout
 
@@ -48,6 +60,7 @@ script depends on, or a failed interaction (upload a file, click, assert the res
 | `assets/fonts/` | Bricolage Grotesque, Public Sans, JetBrains Mono (latin subsets, ~135 KB total). |
 | `tools/set-domain.js` | Points the site at a real domain (sitemap, robots, canonicals, og:image). |
 | `tools/make-icons.sh` | Regenerates the PNG brand rasters from the SVG sources via headless Chrome. |
+| `tools/shoot.js` | Screenshots pages at a real device width and names any element overflowing sideways. |
 | `<tool>/index.html` | One page per tool: markup, SEO metadata, JSON-LD, and only its own wiring. |
 
 Adding a tool: add an entry to `TOOLS` in `js/main.js`, create the page, add a card to

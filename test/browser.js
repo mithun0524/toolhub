@@ -456,6 +456,23 @@ function getJSON(url) {
   });
 }
 
+/* A Chrome left over from an earlier run still owns the port, so the freshly
+   spawned one fails to bind and we silently attach to the *old* browser —
+   carrying its localStorage and service workers. That produced a phantom
+   failure once and could just as easily produce a phantom pass, so refuse to
+   start instead of guessing whose browser this is. */
+async function assertPortFree(port) {
+  try {
+    await getJSON(`http://127.0.0.1:${port}/json/version`);
+  } catch (e) {
+    return;   // nothing listening, which is what we want
+  }
+  throw new Error(
+    `Something is already listening on the debug port ${port}.\n` +
+    `  It is almost certainly a Chrome from an interrupted run. Kill it with:\n` +
+    `    pkill -f "remote-debugging-port=${port}"`);
+}
+
 async function connect(port) {
   for (let i = 0; i < 60; i++) {
     try {
@@ -504,9 +521,11 @@ class Session {
   const pages = filter ? PAGES.filter((p) => p.url.includes(filter)) : PAGES;
   if (!pages.length) { console.error('No pages match', filter); process.exit(1); }
 
+  const debugPort = 9223;
+  await assertPortFree(debugPort);
+
   const server = await serve();
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'nought-chrome-'));
-  const debugPort = 9223;
   const chrome = spawn(CHROME, [
     '--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check',
     '--disable-extensions', '--mute-audio', '--window-size=1280,900',
@@ -563,6 +582,41 @@ class Session {
           `JSON.stringify(${JSON.stringify(page.needs || [])}.filter(id => !document.getElementById(id)))`);
         if (JSON.parse(missing).length) problems.push('missing element ids: ' + missing);
         if (page.test) await evaluate(page.test, true);
+
+        /* Mobile overflow guard.
+           Re-renders the page at 390 CSS px and fails it if anything sticks out
+           sideways. Chrome's --window-size will not go below ~500px on macOS,
+           so this has to come from setDeviceMetricsOverride — a plain narrow
+           screenshot renders wide and crops, which hides the bug rather than
+           showing it. Elements inside an overflow:auto ancestor are exempt:
+           a wide data table scrolling in its own box is correct. */
+        await browser.send('Emulation.setDeviceMetricsOverride',
+          { width: 390, height: 844, deviceScaleFactor: 2, mobile: true }, sessionId);
+        await new Promise((r) => setTimeout(r, 350));
+        const wide = await evaluate(`(() => {
+          const vw = document.documentElement.clientWidth;
+          const out = [];
+          for (const el of document.querySelectorAll('body *')) {
+            const r = el.getBoundingClientRect();
+            if (r.width === 0 || r.right <= vw + 1) continue;
+            let clipped = false;
+            for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) {
+              if (getComputedStyle(a).overflowX !== 'visible') { clipped = true; break; }
+            }
+            if (clipped) continue;
+            out.push(el.tagName.toLowerCase() +
+              (el.className && typeof el.className === 'string'
+                ? '.' + el.className.trim().split(/\\s+/)[0] : '') +
+              ' (+' + Math.round(r.right - vw) + 'px)');
+          }
+          return JSON.stringify({ w: document.documentElement.scrollWidth, out: out.slice(0, 3) });
+        })()`);
+        const { w, out } = JSON.parse(wide);
+        if (w > 391) {
+          problems.push('overflows at 390px wide: ' + w + 'px' +
+            (out.length ? ' — ' + out.join(', ') : ' (a pseudo-element or a decoration)'));
+        }
+        await browser.send('Emulation.clearDeviceMetricsOverride', {}, sessionId);
       } catch (e) {
         problems.push(e.message.split('\n')[0]);
       }

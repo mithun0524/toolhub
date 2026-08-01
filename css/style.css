@@ -113,6 +113,10 @@ html[data-theme="light"] {
 [hidden] { display: none !important; }
 
 html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 12px); }
+/* The hero's decorative grid and glow are deliberately wider than the viewport.
+   `clip` (not `hidden`) contains them without turning the page into a scroll
+   container, which would break the sticky nav and scroll-padding above. */
+html, body { overflow-x: clip; }
 body {
   font-family: var(--font-sans);
   background: var(--bg-primary);
@@ -507,6 +511,11 @@ html.is-offline .offline-pill { display: inline-flex; }
   box-shadow: var(--shadow-sm);
 }
 .panel-split { display: grid; grid-template-columns: minmax(260px, 320px) 1fr; gap: 20px; align-items: start; }
+/* Grid and flex children default to min-width:auto, so a wide child (a table,
+   a long select option, a row of stat cards) props the whole column open and
+   pushes the page sideways on a phone. Letting them shrink is what makes the
+   single-column mobile layout actually fit. */
+.panel-split > *, .grid-2 > *, .grid-3 > * { min-width: 0; }
 .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
 @media(min-width: 861px) {
