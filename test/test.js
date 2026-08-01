@@ -330,10 +330,17 @@ const pages = ['index.html', '404.html', 'offline.html']
   .concat(registry.map((t) => t.url));
 
 it('no page loads anything from a third party', () => {
+  // The site's own origin is allowed: tools/set-domain.js stamps it into every
+  // canonical, og:url and og:image, and those are identity, not a fetch.
+  const canonical = home.match(/<link rel="canonical" href="(https?:\/\/[^/"]+)/);
+  const own = canonical ? canonical[1].replace(/^https?:\/\//, '') : null;
+  const allowed = ['schema.org', 'www.w3.org', 'www.sitemaps.org', 'example.com']
+    .concat(own ? [own] : []);
+  const skip = new RegExp('https?://(?:' + allowed.map((a) => a.replace(/\./g, '\\.')).join('|') + ')');
+
   for (const p of pages.concat(['js/main.js', 'js/image-batch.js', 'js/tools-core.js', 'css/style.css'])) {
-    const src = read(p);
-    const hit = src.match(/https?:\/\/(?!schema\.org|www\.w3\.org|www\.sitemaps\.org|example\.com)[^\s"')]+/);
-    assert.ok(!hit, p + ' still reaches out to ' + (hit && hit[0]));
+    const hit = [...read(p).matchAll(/https?:\/\/[^\s"')]+/g)].map((m) => m[0]).find((u) => !skip.test(u));
+    assert.ok(!hit, p + ' still reaches out to ' + hit);
   }
 });
 

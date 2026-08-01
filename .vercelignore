@@ -1,0 +1,5 @@
+# Internal only — never part of the shipped site.
+graphify-out/
+test/
+tools/
+README.md
