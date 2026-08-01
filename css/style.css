@@ -113,9 +113,9 @@ html[data-theme="light"] {
 [hidden] { display: none !important; }
 
 html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 12px); }
-/* The hero's decorative grid and glow are deliberately wider than the viewport.
-   `clip` (not `hidden`) contains them without turning the page into a scroll
-   container, which would break the sticky nav and scroll-padding above. */
+/* Nothing may scroll the page sideways. `clip` rather than `hidden` because
+   hidden would turn the page into a scroll container and break both the sticky
+   nav and the scroll-padding above. test/browser.js enforces this at 390px. */
 html, body { overflow-x: clip; }
 body {
   font-family: var(--font-sans);
@@ -237,76 +237,76 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
   .nav-actions { margin-left: auto; }
 }
 
-/* ===== HERO (deliberately the one big thing on the page) =====
-   Backdrop: a hairline measurement grid fading out downward, with one warm
-   amber bloom off to the side. Same treatment as the share card, so a link
-   preview and the page it opens read as one object. Purely decorative and
-   pointer-transparent, so it never intercepts a click. */
-.hero { padding: 64px 0 32px; text-align: center; max-width: 720px; margin: 0 auto; position: relative; }
-.hero::before, .hero::after { content: ''; position: absolute; pointer-events: none; z-index: -1; }
-.hero::before {
-  inset: -100px -50vw 0;
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--text-primary) 5%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--text-primary) 5%, transparent) 1px, transparent 1px);
-  background-size: 46px 46px;
-  -webkit-mask-image: radial-gradient(120% 90% at 50% 20%, #000 0%, transparent 72%);
-  mask-image: radial-gradient(120% 90% at 50% 20%, #000 0%, transparent 72%);
+/* ===== MASTHEAD =====
+   Left-aligned and asymmetric: the statement on the left, a spec table down the
+   right. No centred hero, no badge, no radial glow — the page is meant to read
+   as the front matter of a reference manual, not a product launch. */
+.masthead { padding: 72px 0 44px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+.masthead-inner {
+  display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(220px, 0.65fr);
+  gap: 48px; align-items: end;
 }
-.hero::after {
-  width: 620px; height: 620px; top: -300px; right: -180px; border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 15%, transparent) 0%, transparent 62%);
+.masthead-lede h1 {
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  font-weight: 800; line-height: 0.98; letter-spacing: -2.4px;
+  margin-bottom: 20px;
 }
-@media(max-width: 720px) { .hero::after { right: -320px; } }
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--bg-card); border: 1px solid var(--border);
-  padding: 5px 13px; border-radius: 99px; font-size: 0.78rem; font-weight: 500;
-  color: var(--text-secondary); margin-bottom: 20px;
-}
-.hero-badge .dot {
-  width: 6px; height: 6px; background: var(--success); border-radius: 50%;
-  box-shadow: 0 0 0 3px var(--success-light);
-}
-.hero h1 {
-  font-size: clamp(2.1rem, 5vw, 3.4rem);
-  font-weight: 800; line-height: 1.04; letter-spacing: -1.8px;
-  margin-bottom: 14px;
-}
-.hero h1 .sub { color: var(--accent); }
-.hero p { font-size: 0.98rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 26px; }
-.hero-stats {
-  display: flex; justify-content: center; gap: 28px; flex-wrap: wrap;
-  margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--border);
-}
-.stat { text-align: center; }
-/* Mono numerals: the whole brand argument is a row of zeros, so they get the
-   face whose zero is the logo. */
-.stat-num {
-  font-family: var(--font-mono); font-size: 1.15rem; font-weight: 600;
-  letter-spacing: -0.5px; font-variant-numeric: tabular-nums;
-}
-.stat-label {
-  font-size: 0.7rem; color: var(--text-muted); font-weight: 500; margin-top: 2px;
-  text-transform: uppercase; letter-spacing: 0.6px;
+/* The payoff line is the only amber text on the page above the fold. */
+.masthead-lede h1 .sub { color: var(--accent); }
+.masthead-lede p {
+  font-size: 0.95rem; color: var(--text-secondary); max-width: 46ch; line-height: 1.6;
 }
 
-/* ===== SEARCH ===== */
-.search-wrap { max-width: 460px; margin: 0 auto; position: relative; }
-.search-wrap input {
-  width: 100%; padding: 11px 72px 11px 38px;
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius-md); font-size: 0.9rem;
-  transition: var(--transition); box-shadow: var(--shadow-sm);
+/* Spec table: the privacy claim as a datasheet. Dotted leaders tie label to
+   value the way a parts list does. */
+.spec { display: flex; flex-direction: column; gap: 0; }
+.spec-row {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 9px 0; border-top: 1px solid var(--border);
 }
-.search-wrap input:focus { outline: none; border-color: var(--border-active); box-shadow: 0 0 0 3px var(--accent-light); }
+.spec-row:last-child { border-bottom: 1px solid var(--border); }
+.spec dt {
+  font-size: 0.78rem; color: var(--text-muted); white-space: nowrap;
+}
+/* The leader is drawn, not typed, so it stretches to fill whatever is left. */
+.spec-row::after {
+  content: ''; flex: 1; height: 1px; margin-bottom: 3px;
+  background: repeating-linear-gradient(90deg, var(--border) 0 2px, transparent 2px 5px);
+}
+.spec dd {
+  order: 3; font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600;
+  font-variant-numeric: tabular-nums; color: var(--text-primary);
+}
+.spec dd.yes { color: var(--accent-ink); }
+
+@media(max-width: 780px) {
+  .masthead { padding: 44px 0 30px; }
+  .masthead-inner { grid-template-columns: 1fr; gap: 30px; align-items: start; }
+  .masthead-lede h1 { letter-spacing: -1.4px; }
+}
+
+/* ===== SEARCH =====
+   Full width and flush left. On a site whose entire job is "find the one tool
+   you came for", this is the primary control, not a decorative hero field. */
+.search-wrap { position: relative; margin: 0; }
+.search-wrap input {
+  width: 100%; padding: 13px 82px 13px 42px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono); font-size: 0.88rem; letter-spacing: -0.2px;
+  transition: var(--transition);
+}
+.search-wrap input:focus {
+  outline: none; border-color: var(--border-active);
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
 .search-wrap input::placeholder { color: var(--text-muted); }
 .search-icon {
-  position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
-  color: var(--text-muted); pointer-events: none; width: 15px; height: 15px;
+  position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); pointer-events: none; width: 16px; height: 16px;
 }
 .search-kbd {
-  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
   display: flex; gap: 3px; pointer-events: none;
 }
 kbd {
@@ -315,7 +315,7 @@ kbd {
   border: 1px solid var(--border); color: var(--text-muted); line-height: 1.3;
 }
 .search-clear {
-  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
   background: none; border: none; color: var(--text-muted);
   display: none; padding: 5px; line-height: 0; border-radius: var(--radius-sm);
 }
@@ -323,83 +323,145 @@ kbd {
 .search-clear:hover { color: var(--text-primary); background: var(--bg-card-hover); }
 .search-wrap input:not(:placeholder-shown) ~ .search-kbd { display: none; }
 
-/* ===== CATEGORY PILLS ===== */
+/* ===== CATEGORY FILTER =====
+   Text switches, not chips. A row of pills reads as decoration; this reads as
+   the filter row of a directory. */
 .cat-pills {
-  display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
-  margin: 28px 0 24px;
+  display: flex; gap: 4px; flex-wrap: wrap;
+  margin: 26px 0 6px; border-bottom: 1px solid var(--border);
 }
 .cat-pill {
-  padding: 6px 14px; border-radius: 99px; font-size: 0.81rem; font-weight: 500;
-  border: 1px solid var(--border); background: var(--bg-card);
-  color: var(--text-secondary); transition: var(--transition);
+  position: relative; background: none; border: none;
+  padding: 9px 12px 11px; border-radius: 0;
+  font-size: 0.83rem; font-weight: 500; color: var(--text-muted);
+  display: inline-flex; align-items: baseline; gap: 6px;
+  transition: color var(--transition);
 }
-.cat-pill:hover { border-color: var(--border-hover); color: var(--text-primary); }
-.cat-pill[aria-pressed="true"] {
-  background: var(--text-primary); color: var(--text-invert);
-  border-color: var(--text-primary); font-weight: 600;
+.cat-pill .cat-n {
+  font-family: var(--font-mono); font-size: 0.68rem;
+  color: var(--text-muted); opacity: 0.7;
 }
+.cat-pill:hover { color: var(--text-primary); }
+.cat-pill[aria-pressed="true"] { color: var(--text-primary); font-weight: 600; }
+/* The active rule sits on the container's border, not above it. */
+.cat-pill[aria-pressed="true"]::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -1px;
+  height: 2px; background: var(--accent);
+}
+.cat-pill[aria-pressed="true"] .cat-n { color: var(--accent-ink); opacity: 1; }
 
-/* ===== SECTION TITLE ===== */
+/* ===== THE INDEX =====
+   Rows, not cards. One counter across the whole index: hidden rows generate no
+   boxes, so filtering renumbers 01, 02, 03… by itself. */
+.index { counter-reset: tool; }
+.tools-section { margin-bottom: 30px; scroll-margin-top: 76px; }
 .section-title {
-  font-size: 0.95rem; font-weight: 600; margin-bottom: 12px;
-  letter-spacing: -0.2px; display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.4px;
+  color: var(--text-muted); margin: 0 0 4px; padding-bottom: 8px;
+  display: flex; align-items: center; gap: 8px;
 }
 .section-title .count {
   font-size: 0.7rem; font-weight: 500; color: var(--text-muted);
-  border: 1px solid var(--border); border-radius: 99px; padding: 1px 7px;
+  border: none; padding: 0; opacity: 0.6;
+}
+.section-title .count::before { content: '('; }
+.section-title .count::after { content: ')'; }
+
+.index-list { list-style: none; }
+.tool-cell { position: relative; border-top: 1px solid var(--border); }
+.tools-section:last-child .index-list .tool-cell:last-child { border-bottom: 1px solid var(--border); }
+
+.tool-card {
+  display: grid; grid-template-columns: 28px 34px 1fr 24px;
+  align-items: center; gap: 14px;
+  padding: 13px 8px 13px 0;
+  transition: background var(--transition), padding var(--transition);
+}
+/* Row number, drawn from the counter rather than written into the markup. */
+.tool-card::before {
+  counter-increment: tool;
+  content: counter(tool, decimal-leading-zero);
+  font-family: var(--font-mono); font-size: 0.72rem;
+  color: var(--text-muted); opacity: 0.55; text-align: right;
+}
+.row-icon {
+  width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  color: var(--text-secondary); flex-shrink: 0;
+  transition: var(--transition);
+}
+.row-icon svg { width: 16px; height: 16px; }
+.row-body { min-width: 0; }
+.tool-card-name {
+  font-size: 0.95rem; font-weight: 600; letter-spacing: -0.2px;
+  margin-bottom: 1px;
+}
+.tool-card-desc {
+  font-size: 0.8rem; color: var(--text-muted); line-height: 1.45;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.row-go {
+  font-family: var(--font-mono); font-size: 0.95rem; color: var(--accent);
+  opacity: 0; transform: translateX(-6px);
+  transition: opacity var(--transition), transform var(--transition);
 }
 
-/* ===== TOOLS GRID =====
-   Each cell is a wrapper, not the link: the pin toggle is a real <button> and
-   cannot legally nest inside the card's <a>. */
-.tools-section { margin-bottom: 32px; scroll-margin-top: 72px; }
-.tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(226px, 1fr)); gap: 12px; }
-.tool-cell { position: relative; display: flex; }
-.tool-card {
-  position: relative; flex: 1;
-  background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius-md); padding: 15px;
-  transition: var(--transition);
-  display: flex; flex-direction: column; gap: 8px;
+/* Hover: the row lights up and grows an amber edge, the way a selected line in
+   a terminal list does. No card lift, no shadow — and no padding change, which
+   would shunt the text sideways every time the pointer crossed a row. */
+.tool-cell::before {
+  content: ''; position: absolute; left: -8px; top: 0; bottom: 0; width: 2px;
+  background: var(--accent); transform: scaleY(0); transform-origin: center;
+  transition: transform var(--transition);
 }
-.tool-card:hover {
-  border-color: var(--border-hover); background: var(--bg-card-hover);
-  transform: translateY(-1px); box-shadow: var(--shadow-md);
+.tool-cell:hover::before { transform: scaleY(1); }
+.tool-card:hover { background: var(--bg-card); }
+.tool-card:hover .row-icon { border-color: var(--accent); color: var(--accent-ink); }
+.tool-card:hover::before { color: var(--accent-ink); opacity: 1; }
+.tool-card:hover .row-go { opacity: 1; transform: translateX(0); }
+.tool-card:focus-visible { background: var(--bg-card); }
+
+@media(max-width: 620px) {
+  /* Drop the number column and let the description wrap to two lines. The
+     trailing slot belongs to the pin here: on touch the pin is permanently
+     visible, and an arrow underneath it would just be something to collide
+     with. The whole row is the link either way. */
+  .tool-card { grid-template-columns: 30px 1fr 24px; gap: 12px; padding: 12px 0; }
+  .tool-card::before { display: none; }
+  .row-icon { width: 30px; height: 30px; }
+  .tool-card-desc { white-space: normal; }
+  .row-go { display: none; }
 }
-.tool-card-head { display: flex; align-items: center; justify-content: space-between; }
-.tool-card-icon {
-  width: 30px; height: 30px; border-radius: var(--radius-sm);
-  background: var(--bg-secondary); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.tool-card-icon svg { width: 15px; height: 15px; }
-/* The card only warms up on approach — a wall of amber icons would flatten the
-   grid into noise. */
-.tool-card:hover .tool-card-icon {
-  background: var(--accent-light); border-color: transparent; color: var(--accent-ink);
-}
-html[data-theme="light"] .tool-card-icon { background: var(--accent-light); border-color: transparent; color: var(--accent-ink); }
-.tool-card-name { font-size: 0.89rem; font-weight: 600; letter-spacing: -0.1px; }
-.tool-card-desc { font-size: 0.79rem; color: var(--text-secondary); line-height: 1.45; flex: 1; }
-.tool-card-arrow { color: var(--text-muted); width: 13px; height: 13px; transition: var(--transition); }
-.tool-card:hover .tool-card-arrow { color: var(--text-primary); transform: translateX(2px); }
 
 /* ===== PIN TOGGLE =====
-   Sits over the card's top-right corner. Always rendered so the hit target is
-   stable, but only visible on hover/focus — or permanently once pinned. */
+   Occupies the row-number slot: the number is decoration, the pin is not, so on
+   approach the slot switches from one to the other rather than growing a new
+   control and shifting the row. */
 .pin-btn {
-  position: absolute; top: 9px; right: 9px; z-index: 2;
-  width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
-  background: transparent; border: 1px solid transparent; border-radius: var(--radius-sm);
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%); z-index: 2;
+  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  background: transparent; border: none; border-radius: var(--radius-sm);
   color: var(--text-muted); opacity: 0; transition: var(--transition);
 }
-.pin-btn svg { width: 14px; height: 14px; }
+.pin-btn svg { width: 13px; height: 13px; }
 .tool-cell:hover .pin-btn, .pin-btn:focus-visible { opacity: 1; }
-.pin-btn:hover { color: var(--text-primary); background: var(--bg-secondary); border-color: var(--border); }
-.pin-btn[aria-pressed="true"] { opacity: 1; color: var(--accent-ink); }
+.tool-cell:hover .tool-card::before { opacity: 0; }
+.pin-btn:hover { color: var(--text-primary); }
+/* Pinned rows keep the pin permanently; the solid background occludes the
+   number underneath even where :has() is unavailable. */
+.pin-btn[aria-pressed="true"] {
+  opacity: 1; color: var(--accent-ink); background: var(--bg-primary);
+}
 .pin-btn[aria-pressed="true"] svg { fill: currentColor; }
+.tool-cell:has(.pin-btn[aria-pressed="true"]) .tool-card::before { opacity: 0; }
+.tool-cell:has(.pin-btn[aria-pressed="true"]) .tool-card { background: var(--bg-card); }
 /* No hover on touch: the toggle would otherwise be invisible and unreachable. */
 @media (hover: none) { .pin-btn { opacity: 1; } }
+@media(max-width: 620px) {
+  /* The number column is gone here, so the pin moves to the trailing edge. */
+  .pin-btn { left: auto; right: 0; }
+}
 
 /* ===== JUMP BACK IN =====
    Pinned + recently used tools, from localStorage. Hidden until there is
@@ -833,27 +895,31 @@ html[data-theme="light"] .code-out .b { color: #7e22ce; }
 .empty-state p { font-size: 0.82rem; }
 
 /* ===== FAQ ===== */
-.faq-section { margin: 30px 0; }
-.faq-section h2 { font-size: 1.05rem; font-weight: 600; margin-bottom: 12px; letter-spacing: -0.2px; }
-.faq-item {
-  border: 1px solid var(--border); border-radius: var(--radius-md);
-  margin-bottom: 6px; overflow: hidden; background: var(--bg-card);
+/* Hairline rows, matching the index — a stack of bordered boxes would put a
+   second, competing card system on a page that just abolished the first. */
+.faq-section { margin: 44px 0 30px; }
+.faq-section h2 {
+  font-family: var(--font-mono);
+  font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.4px;
+  color: var(--text-muted); margin-bottom: 4px; padding-bottom: 8px;
 }
+.faq-item { border-top: 1px solid var(--border); background: transparent; }
+.faq-item:last-child { border-bottom: 1px solid var(--border); }
 .faq-q {
-  width: 100%; padding: 11px 14px; text-align: left;
-  background: transparent; font-size: 0.86rem; font-weight: 500; border: none;
+  width: 100%; padding: 13px 4px; text-align: left;
+  background: transparent; font-size: 0.88rem; font-weight: 500; border: none;
   display: flex; justify-content: space-between; align-items: center; gap: 14px;
 }
-.faq-q:hover { background: var(--bg-card-hover); }
+.faq-q:hover { color: var(--accent-ink); }
 .faq-icon { color: var(--text-muted); transition: transform var(--transition); flex-shrink: 0; width: 14px; height: 14px; }
 .faq-item.open .faq-icon { transform: rotate(180deg); color: var(--text-primary); }
 .faq-a {
-  padding: 0 14px; display: grid; grid-template-rows: 0fr;
+  padding: 0 4px; display: grid; grid-template-rows: 0fr;
   transition: grid-template-rows 0.25s ease, padding 0.2s ease;
   font-size: 0.83rem; color: var(--text-secondary); line-height: 1.6;
 }
 .faq-a > div { overflow: hidden; }
-.faq-item.open .faq-a { grid-template-rows: 1fr; padding: 0 14px 12px; }
+.faq-item.open .faq-a { grid-template-rows: 1fr; padding: 0 4px 14px; }
 
 /* ===== RELATED TOOLS ===== */
 .related { margin: 26px 0; }

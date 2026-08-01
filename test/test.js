@@ -291,7 +291,7 @@ it('every registered tool page exists on disk', () => {
 });
 
 const home = read('index.html');
-const cells = [...home.matchAll(/<div class="tool-cell" data-tool="([^"]+)">\s*<a href="([^"]+)"/g)]
+const cells = [...home.matchAll(/<(?:div|li) class="tool-cell" data-tool="([^"]+)">\s*<a href="([^"]+)"/g)]
   .map(([, id, href]) => ({ id, href }));
 
 it('the home grid matches the registry exactly', () => {
