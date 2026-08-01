@@ -77,8 +77,8 @@ const PAGES = [
       const reg = await navigator.serviceWorker.getRegistration();
       assert(reg, 'service worker registered — the site is installable and offline-capable');
       // Registration alone proves nothing about offline; check the precache filled.
-      await until(async () => (await caches.keys()).includes('nought-v1'), 'precache created');
-      const cache = await caches.open('nought-v1');
+      await until(async () => (await caches.keys()).includes('nought-v2'), 'precache created');
+      const cache = await caches.open('nought-v2');
       for (const url of ['css/style.css', 'js/main.js', 'developer/json-formatter/',
                          'assets/fonts/jetbrainsmono.woff2']) {
         assert(await cache.match(url), 'not precached, so unavailable offline: ' + url);

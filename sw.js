@@ -11,7 +11,7 @@
 
    Bump CACHE_VERSION whenever anything in PRECACHE changes, otherwise returning
    visitors keep the old copy until their browser evicts it. */
-const CACHE_VERSION = 'nought-v1';
+const CACHE_VERSION = 'nought-v2';
 const RUNTIME_CACHE = 'nought-runtime-v1';
 
 const PRECACHE = [
@@ -24,6 +24,10 @@ const PRECACHE = [
   'js/tools-core.js',
   'js/main.js',
   'js/image-batch.js',
+  'js/home.js',
+  // The home page's QR tile needs this immediately, unlike the tool pages that
+  // pull their heavy libraries in on demand.
+  'vendor/qrcode.min.js',
   'assets/favicon.svg',
   'assets/logo-icon.svg',
   'assets/fonts/bricolage.woff2',

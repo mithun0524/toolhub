@@ -291,7 +291,11 @@ it('every registered tool page exists on disk', () => {
 });
 
 const home = read('index.html');
-const cells = [...home.matchAll(/<(?:div|li) class="tool-cell" data-tool="([^"]+)">\s*<a href="([^"]+)"/g)]
+// Tolerant of the tile's other classes and of a li/div swap, but still insists
+// the tool's link is the cell's first child — that is what makes the whole tile
+// clickable and what the pin/recents machinery hangs off.
+const cells = [...home.matchAll(
+  /<(?:div|li) class="[^"]*\btool-cell\b[^"]*"[^>]*data-tool="([^"]+)"[^>]*>\s*<a href="([^"]+)"/g)]
   .map(([, id, href]) => ({ id, href }));
 
 it('the home grid matches the registry exactly', () => {

@@ -31,21 +31,21 @@
   --font-display: 'Bricolage Grotesque', var(--font-sans);
   --font-mono:    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --bg-primary:    #0b0b0c;
-  --bg-secondary:  #121214;
-  --bg-card:       #161618;
-  --bg-card-hover: #1e1e21;
-  --bg-input:      #121214;
+  --bg-primary:    #09090b;   /* zinc-950  */
+  --bg-secondary:  #131316;
+  --bg-card:       #111113;
+  --bg-card-hover: #18181b;   /* zinc-900  */
+  --bg-input:      #131316;
 
-  --border:        #26262a;
-  --border-hover:  #3a3a40;
+  --border:        #27272a;   /* zinc-800  */
+  --border-hover:  #3f3f46;   /* zinc-700  */
   --border-active: #ffb020;
 
   --accent:        #ffb020;
   --accent-hover:  #ffc24d;
   --accent-ink:    #ffb020;   /* accent as *text*: darkened in light mode */
   --accent-light:  rgba(255, 176, 32, 0.13);
-  --accent-fg:     #0b0b0c;
+  --accent-fg:     #09090b;
 
   --success:       #34d399;
   --success-light: rgba(52, 211, 153, 0.12);
@@ -53,13 +53,14 @@
   --danger-light:  rgba(248, 113, 113, 0.12);
   --warning:       #fbbf24;
 
-  --text-primary:   #fafaf9;
+  --text-primary:   #fafafa;
   --text-secondary: #a1a1aa;
   --text-muted:     #71717a;
-  --text-invert:    #0b0b0c;
+  --text-invert:    #09090b;
 
+  /* shadcn's scale: --radius 0.5rem, cards a step up at 0.75rem. */
   --radius-sm: 6px;
-  --radius-md: 9px;
+  --radius-md: 8px;
   --radius-lg: 12px;
 
   --transition: 0.18s cubic-bezier(0.16, 1, 0.3, 1);
@@ -69,19 +70,19 @@
 
   --nav-h: 54px;
   --chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E");
-  --checker: repeating-conic-gradient(#26262a 0% 25%, #161618 0% 50%) 50% / 16px 16px;
+  --checker: repeating-conic-gradient(#27272a 0% 25%, #111113 0% 50%) 50% / 16px 16px;
   color-scheme: dark;
 }
 
 html[data-theme="light"] {
-  --bg-primary:    #fcfcfb;
-  --bg-secondary:  #f4f4f2;
+  --bg-primary:    #ffffff;
+  --bg-secondary:  #fafafa;   /* zinc-50  */
   --bg-card:       #ffffff;
-  --bg-card-hover: #f6f6f4;
+  --bg-card-hover: #f4f4f5;   /* zinc-100 */
   --bg-input:      #ffffff;
 
-  --border:        #e6e5e1;
-  --border-hover:  #d2d1cc;
+  --border:        #e4e4e7;   /* zinc-200 */
+  --border-hover:  #d4d4d8;   /* zinc-300 */
   --border-active: #b07400;
 
   /* Amber fills stay amber (they carry near-black text), but amber *as text*
@@ -102,7 +103,7 @@ html[data-theme="light"] {
   --shadow-sm:  0 1px 2px rgba(9,9,11,0.05);
   --shadow-md:  0 3px 12px rgba(9,9,11,0.06);
   --shadow-lg:  0 10px 34px rgba(9,9,11,0.09);
-  --checker: repeating-conic-gradient(#e6e5e1 0% 25%, #f4f4f2 0% 50%) 50% / 16px 16px;
+  --checker: repeating-conic-gradient(#e4e4e7 0% 25%, #fafafa 0% 50%) 50% / 16px 16px;
   color-scheme: light;
 }
 
@@ -237,63 +238,64 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
   .nav-actions { margin-left: auto; }
 }
 
-/* ===== MASTHEAD =====
-   Left-aligned and asymmetric: the statement on the left, a spec table down the
-   right. No centred hero, no badge, no radial glow — the page is meant to read
-   as the front matter of a reference manual, not a product launch. */
-.masthead { padding: 72px 0 44px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
-.masthead-inner {
-  display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(220px, 0.65fr);
-  gap: 48px; align-items: end;
+/* ===== INTRO =====
+   Compact on purpose: the bento below is the page, so the header states the
+   claim and hands over to the search field in about 250px. */
+.intro {
+  padding: 56px 0 30px;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(210px, 300px);
+  gap: 52px; align-items: end;
 }
-.masthead-lede h1 {
-  font-size: clamp(2.4rem, 6vw, 4.2rem);
-  font-weight: 800; line-height: 0.98; letter-spacing: -2.4px;
-  margin-bottom: 20px;
-}
-/* The payoff line is the only amber text on the page above the fold. */
-.masthead-lede h1 .sub { color: var(--accent); }
-.masthead-lede p {
-  font-size: 0.95rem; color: var(--text-secondary); max-width: 46ch; line-height: 1.6;
-}
-
-/* Spec table: the privacy claim as a datasheet. Dotted leaders tie label to
-   value the way a parts list does. */
-.spec { display: flex; flex-direction: column; gap: 0; }
+.intro-main { max-width: 620px; }
+/* Spec table: the privacy claim as a datasheet, with dotted leaders the way a
+   parts list reads. It also stops the header from leaving half a screen empty. */
+.spec { display: flex; flex-direction: column; }
 .spec-row {
   display: flex; align-items: baseline; gap: 8px;
   padding: 9px 0; border-top: 1px solid var(--border);
 }
 .spec-row:last-child { border-bottom: 1px solid var(--border); }
-.spec dt {
-  font-size: 0.78rem; color: var(--text-muted); white-space: nowrap;
-}
-/* The leader is drawn, not typed, so it stretches to fill whatever is left. */
+.spec dt { font-size: 0.78rem; color: var(--text-muted); white-space: nowrap; }
+/* Leader is drawn, not typed, so it stretches to whatever room is left. */
 .spec-row::after {
   content: ''; flex: 1; height: 1px; margin-bottom: 3px;
   background: repeating-linear-gradient(90deg, var(--border) 0 2px, transparent 2px 5px);
 }
 .spec dd {
   order: 3; font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600;
-  font-variant-numeric: tabular-nums; color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 }
 .spec dd.yes { color: var(--accent-ink); }
-
-@media(max-width: 780px) {
-  .masthead { padding: 44px 0 30px; }
-  .masthead-inner { grid-template-columns: 1fr; gap: 30px; align-items: start; }
-  .masthead-lede h1 { letter-spacing: -1.4px; }
+@media(max-width: 900px) {
+  .intro { grid-template-columns: 1fr; gap: 28px; align-items: start; }
+}
+.badge-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 26px; padding: 0 12px; border-radius: 999px;
+  background: var(--bg-card-hover); border: 1px solid var(--border);
+  font-size: 0.76rem; font-weight: 500; color: var(--text-secondary);
+  margin-bottom: 18px;
+}
+.badge-pill .dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
+.intro h1 {
+  font-size: clamp(2.1rem, 5.2vw, 3.3rem);
+  font-weight: 800; line-height: 1.02; letter-spacing: -2px; margin-bottom: 16px;
+}
+.intro h1 .sub { color: var(--text-muted); }
+.intro-main > p {
+  font-size: 0.96rem; color: var(--text-secondary); line-height: 1.6;
+  max-width: 54ch; margin-bottom: 22px;
 }
 
-/* ===== SEARCH =====
-   Full width and flush left. On a site whose entire job is "find the one tool
-   you came for", this is the primary control, not a decorative hero field. */
-.search-wrap { position: relative; margin: 0; }
+/* ===== SEARCH ===== */
+.search-wrap { position: relative; max-width: 480px; }
 .search-wrap input {
-  width: 100%; padding: 13px 82px 13px 42px;
+  width: 100%; height: 42px; padding: 0 76px 0 40px;
   background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  font-family: var(--font-mono); font-size: 0.88rem; letter-spacing: -0.2px;
+  border-radius: var(--radius-md); font-size: 0.9rem;
   transition: var(--transition);
 }
 .search-wrap input:focus {
@@ -302,11 +304,11 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
 }
 .search-wrap input::placeholder { color: var(--text-muted); }
 .search-icon {
-  position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
-  color: var(--text-muted); pointer-events: none; width: 16px; height: 16px;
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); pointer-events: none; width: 15px; height: 15px;
 }
 .search-kbd {
-  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  position: absolute; right: 11px; top: 50%; transform: translateY(-50%);
   display: flex; gap: 3px; pointer-events: none;
 }
 kbd {
@@ -315,7 +317,7 @@ kbd {
   border: 1px solid var(--border); color: var(--text-muted); line-height: 1.3;
 }
 .search-clear {
-  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  position: absolute; right: 9px; top: 50%; transform: translateY(-50%);
   background: none; border: none; color: var(--text-muted);
   display: none; padding: 5px; line-height: 0; border-radius: var(--radius-sm);
 }
@@ -323,145 +325,162 @@ kbd {
 .search-clear:hover { color: var(--text-primary); background: var(--bg-card-hover); }
 .search-wrap input:not(:placeholder-shown) ~ .search-kbd { display: none; }
 
-/* ===== CATEGORY FILTER =====
-   Text switches, not chips. A row of pills reads as decoration; this reads as
-   the filter row of a directory. */
+/* ===== CATEGORY TABS (shadcn tabs geometry) ===== */
 .cat-pills {
-  display: flex; gap: 4px; flex-wrap: wrap;
-  margin: 26px 0 6px; border-bottom: 1px solid var(--border);
+  display: inline-flex; gap: 2px; flex-wrap: wrap;
+  padding: 4px; margin: 26px 0 16px;
+  background: var(--bg-secondary); border: 1px solid var(--border);
+  border-radius: var(--radius-md);
 }
 .cat-pill {
-  position: relative; background: none; border: none;
-  padding: 9px 12px 11px; border-radius: 0;
-  font-size: 0.83rem; font-weight: 500; color: var(--text-muted);
-  display: inline-flex; align-items: baseline; gap: 6px;
-  transition: color var(--transition);
-}
-.cat-pill .cat-n {
-  font-family: var(--font-mono); font-size: 0.68rem;
-  color: var(--text-muted); opacity: 0.7;
-}
-.cat-pill:hover { color: var(--text-primary); }
-.cat-pill[aria-pressed="true"] { color: var(--text-primary); font-weight: 600; }
-/* The active rule sits on the container's border, not above it. */
-.cat-pill[aria-pressed="true"]::after {
-  content: ''; position: absolute; left: 0; right: 0; bottom: -1px;
-  height: 2px; background: var(--accent);
-}
-.cat-pill[aria-pressed="true"] .cat-n { color: var(--accent-ink); opacity: 1; }
-
-/* ===== THE INDEX =====
-   Rows, not cards. One counter across the whole index: hidden rows generate no
-   boxes, so filtering renumbers 01, 02, 03… by itself. */
-.index { counter-reset: tool; }
-.tools-section { margin-bottom: 30px; scroll-margin-top: 76px; }
-.section-title {
-  font-family: var(--font-mono);
-  font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.4px;
-  color: var(--text-muted); margin: 0 0 4px; padding-bottom: 8px;
-  display: flex; align-items: center; gap: 8px;
-}
-.section-title .count {
-  font-size: 0.7rem; font-weight: 500; color: var(--text-muted);
-  border: none; padding: 0; opacity: 0.6;
-}
-.section-title .count::before { content: '('; }
-.section-title .count::after { content: ')'; }
-
-.index-list { list-style: none; }
-.tool-cell { position: relative; border-top: 1px solid var(--border); }
-.tools-section:last-child .index-list .tool-cell:last-child { border-bottom: 1px solid var(--border); }
-
-.tool-card {
-  display: grid; grid-template-columns: 28px 34px 1fr 24px;
-  align-items: center; gap: 14px;
-  padding: 13px 8px 13px 0;
-  transition: background var(--transition), padding var(--transition);
-}
-/* Row number, drawn from the counter rather than written into the markup. */
-.tool-card::before {
-  counter-increment: tool;
-  content: counter(tool, decimal-leading-zero);
-  font-family: var(--font-mono); font-size: 0.72rem;
-  color: var(--text-muted); opacity: 0.55; text-align: right;
-}
-.row-icon {
-  width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
-  border: 1px solid var(--border); border-radius: var(--radius-sm);
-  color: var(--text-secondary); flex-shrink: 0;
+  padding: 6px 12px; border: none; border-radius: 6px;
+  background: transparent; color: var(--text-secondary);
+  font-size: 0.82rem; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 6px;
   transition: var(--transition);
 }
-.row-icon svg { width: 16px; height: 16px; }
-.row-body { min-width: 0; }
-.tool-card-name {
-  font-size: 0.95rem; font-weight: 600; letter-spacing: -0.2px;
-  margin-bottom: 1px;
+.cat-pill .cat-n { font-family: var(--font-mono); font-size: 0.68rem; opacity: 0.6; }
+.cat-pill:hover { color: var(--text-primary); }
+.cat-pill[aria-pressed="true"] {
+  background: var(--bg-card); color: var(--text-primary); font-weight: 600;
+  box-shadow: var(--shadow-sm);
 }
+html[data-theme="light"] .cat-pill[aria-pressed="true"] { background: #fff; }
+
+/* ===== BENTO =====
+   Twelve columns, dense flow. Five tiles run the real tool; the rest are
+   ordinary links. Filtering drops every tile to one uniform size — a double
+   height tile next to three small ones reads as a broken grid once the row it
+   was balancing has been filtered away. */
+.bento {
+  display: grid; grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: minmax(112px, auto);
+  grid-auto-flow: row dense; gap: 12px; margin-bottom: 40px;
+}
+.tile {
+  position: relative; display: flex; flex-direction: column; gap: 10px;
+  grid-column: span 3;
+  padding: 16px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--transition), background var(--transition), transform var(--transition);
+}
+.tile-3 { grid-column: span 3; }
+.tile-4 { grid-column: span 4; }
+.tile-5 { grid-column: span 5; }
+.tile-6 { grid-column: span 6; }
+.tile-tall { grid-row: span 2; }
+.bento.is-filtered .tile { grid-column: span 3; grid-row: span 1; }
+/* A live widget inside a uniform small tile would overflow it. */
+.bento.is-filtered .live { display: none; }
+
+.tile:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
+.tile:has(.tile-link:focus-visible) { border-color: var(--accent); }
+
+/* The heading block is a stretched link: the whole tile is clickable, but the
+   live controls sit above it and keep their own clicks. */
+.tile-link { display: block; }
+.tile-link::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+.tile-icon {
+  display: flex; width: 30px; height: 30px; margin-bottom: 10px;
+  align-items: center; justify-content: center;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary); border: 1px solid var(--border);
+  color: var(--text-secondary); transition: var(--transition);
+}
+.tile-icon svg { width: 15px; height: 15px; }
+.tile:hover .tile-icon { color: var(--accent-ink); border-color: var(--accent); }
+.tool-card-name { font-size: 0.9rem; font-weight: 600; letter-spacing: -0.2px; }
 .tool-card-desc {
-  font-size: 0.8rem; color: var(--text-muted); line-height: 1.45;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.row-go {
-  font-family: var(--font-mono); font-size: 0.95rem; color: var(--accent);
-  opacity: 0; transform: translateX(-6px);
-  transition: opacity var(--transition), transform var(--transition);
+  font-size: 0.79rem; color: var(--text-muted); line-height: 1.45; margin-top: 3px;
 }
 
-/* Hover: the row lights up and grows an amber edge, the way a selected line in
-   a terminal list does. No card lift, no shadow — and no padding change, which
-   would shunt the text sideways every time the pointer crossed a row. */
-.tool-cell::before {
-  content: ''; position: absolute; left: -8px; top: 0; bottom: 0; width: 2px;
-  background: var(--accent); transform: scaleY(0); transform-origin: center;
-  transition: transform var(--transition);
+/* ===== LIVE WIDGETS =====
+   Above the stretched link so their own clicks are not swallowed by it. */
+.live {
+  position: relative; z-index: 1;
+  margin-top: auto; display: flex; flex-direction: column; gap: 8px;
 }
-.tool-cell:hover::before { transform: scaleY(1); }
-.tool-card:hover { background: var(--bg-card); }
-.tool-card:hover .row-icon { border-color: var(--accent); color: var(--accent-ink); }
-.tool-card:hover::before { color: var(--accent-ink); opacity: 1; }
-.tool-card:hover .row-go { opacity: 1; transform: translateX(0); }
-.tool-card:focus-visible { background: var(--bg-card); }
+.live-center { align-items: center; justify-content: center; flex: 1; }
+.live-value {
+  display: block; width: 100%; padding: 11px 12px;
+  background: var(--bg-secondary); border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono); font-size: clamp(0.82rem, 1.7vw, 1.05rem);
+  letter-spacing: 0.5px; word-break: break-all; line-height: 1.4;
+}
+.live-input {
+  width: 100%; padding: 9px 11px; resize: none;
+  background: var(--bg-secondary); border: 1px solid var(--border);
+  border-radius: var(--radius-md); font-size: 0.82rem; line-height: 1.5;
+  color: inherit; font-family: inherit;
+}
+.live-input.mono { font-family: var(--font-mono); font-size: 0.78rem; }
+.live-input:focus {
+  outline: none; border-color: var(--border-active);
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
+.live-status { font-size: 0.75rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.live-status b { color: var(--text-primary); font-weight: 600; }
+.live-status i { font-style: normal; opacity: 0.4; padding: 0 2px; }
+.live-status.ok { color: var(--success); }
+.live-status.bad { color: var(--danger); }
+.live-actions { display: flex; gap: 6px; }
 
+.live-drop {
+  flex: 1; min-height: 96px; display: flex; align-items: center; justify-content: center;
+  padding: 12px; text-align: center; cursor: pointer;
+  border: 1.5px dashed var(--border-hover); border-radius: var(--radius-md);
+  background: var(--bg-secondary); transition: var(--transition);
+}
+.live-drop:hover, .live-drop.drag-over { border-color: var(--accent); background: var(--accent-light); }
+.live-drop-hint {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  font-size: 0.78rem; color: var(--text-muted); max-width: 24ch; line-height: 1.4;
+}
+.live-drop-hint svg { width: 19px; height: 19px; }
+.live-drop img { max-height: 128px; width: auto; border-radius: var(--radius-sm); }
+.live-drop.has-result .live-drop-hint { display: none; }
+
+.qr-frame {
+  padding: 9px; background: #fff; border-radius: var(--radius-md);
+  line-height: 0; box-shadow: var(--shadow-sm);
+}
+.qr-frame img, .qr-frame canvas { display: block; width: 118px; height: 118px; }
+
+@media(max-width: 1000px) {
+  .bento { grid-template-columns: repeat(6, 1fr); }
+  .tile, .tile-3, .tile-4 { grid-column: span 3; }
+  .tile-5, .tile-6 { grid-column: span 6; }
+  .bento.is-filtered .tile { grid-column: span 3; }
+}
 @media(max-width: 620px) {
-  /* Drop the number column and let the description wrap to two lines. The
-     trailing slot belongs to the pin here: on touch the pin is permanently
-     visible, and an arrow underneath it would just be something to collide
-     with. The whole row is the link either way. */
-  .tool-card { grid-template-columns: 30px 1fr 24px; gap: 12px; padding: 12px 0; }
-  .tool-card::before { display: none; }
-  .row-icon { width: 30px; height: 30px; }
-  .tool-card-desc { white-space: normal; }
-  .row-go { display: none; }
+  .intro { padding: 36px 0 24px; }
+  .bento { grid-template-columns: 1fr; gap: 10px; }
+  .tile, .tile-3, .tile-4, .tile-5, .tile-6,
+  .bento.is-filtered .tile { grid-column: span 1; }
+  .tile-tall { grid-row: span 1; }
+  .cat-pills { display: flex; width: 100%; overflow-x: auto; flex-wrap: nowrap; }
+  .cat-pill { white-space: nowrap; }
 }
 
 /* ===== PIN TOGGLE =====
-   Occupies the row-number slot: the number is decoration, the pin is not, so on
-   approach the slot switches from one to the other rather than growing a new
-   control and shifting the row. */
+   Top-right of a tile, over the stretched link so it stays clickable. Hidden
+   until approach, permanent once pinned. */
 .pin-btn {
-  position: absolute; left: 0; top: 50%; transform: translateY(-50%); z-index: 2;
-  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
-  background: transparent; border: none; border-radius: var(--radius-sm);
+  position: absolute; top: 10px; right: 10px; z-index: 2;
+  width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  background: var(--bg-card); border: 1px solid transparent; border-radius: var(--radius-sm);
   color: var(--text-muted); opacity: 0; transition: var(--transition);
 }
 .pin-btn svg { width: 13px; height: 13px; }
-.tool-cell:hover .pin-btn, .pin-btn:focus-visible { opacity: 1; }
-.tool-cell:hover .tool-card::before { opacity: 0; }
-.pin-btn:hover { color: var(--text-primary); }
-/* Pinned rows keep the pin permanently; the solid background occludes the
-   number underneath even where :has() is unavailable. */
-.pin-btn[aria-pressed="true"] {
-  opacity: 1; color: var(--accent-ink); background: var(--bg-primary);
-}
+.tile:hover .pin-btn, .pin-btn:focus-visible { opacity: 1; }
+.pin-btn:hover { color: var(--text-primary); border-color: var(--border); background: var(--bg-secondary); }
+.pin-btn[aria-pressed="true"] { opacity: 1; color: var(--accent-ink); }
 .pin-btn[aria-pressed="true"] svg { fill: currentColor; }
-.tool-cell:has(.pin-btn[aria-pressed="true"]) .tool-card::before { opacity: 0; }
-.tool-cell:has(.pin-btn[aria-pressed="true"]) .tool-card { background: var(--bg-card); }
+.tile:has(.pin-btn[aria-pressed="true"]) { border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
 /* No hover on touch: the toggle would otherwise be invisible and unreachable. */
 @media (hover: none) { .pin-btn { opacity: 1; } }
-@media(max-width: 620px) {
-  /* The number column is gone here, so the pin moves to the trailing edge. */
-  .pin-btn { left: auto; right: 0; }
-}
 
 /* ===== JUMP BACK IN =====
    Pinned + recently used tools, from localStorage. Hidden until there is

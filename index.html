@@ -12,8 +12,8 @@
   <meta property="og:description" content="Image, PDF, text, calculator and developer tools. 100% client-side — your files never leave your device."/>
   <meta property="og:image" content="https://noughttools.vercel.app/assets/og.png"/>
   <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)"/>
-  <meta name="theme-color" content="#fcfcfb" media="(prefers-color-scheme: light)"/>
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)"/>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"/>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml"/>
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png"/>
   <link rel="manifest" href="manifest.json"/>
@@ -40,39 +40,35 @@
 </nav>
 
 <div class="page-wrapper" id="main">
+<div class="container">
 
-<!-- Masthead: left-aligned and asymmetric on purpose. The privacy claim is a
-     datasheet down the side, not a row of oversized hero statistics. -->
-<header class="masthead">
-  <div class="container masthead-inner">
-    <div class="masthead-lede">
-      <h1>Eighteen tools.<br>None of them<br><span class="sub">phone home.</span></h1>
-      <p>Images, PDFs, text, numbers and code — every one of them runs inside this
-        tab. Nothing is uploaded, nothing is stored, nothing needs an account.</p>
+  <header class="intro">
+    <div class="intro-main">
+      <span class="badge-pill"><span class="dot"></span>18 tools · nothing leaves your device</span>
+      <h1>Your whole toolbox,<br><span class="sub">running in this tab.</span></h1>
+      <p>Compress images, merge PDFs, format JSON, calculate a loan, clean up text.
+        No signup, no uploads, works offline. Five of them are running right here.</p>
+
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <label class="visually-hidden" for="searchInput">Search tools</label>
+        <input type="search" id="searchInput" placeholder="Search 18 tools…" autocomplete="off"/>
+        <span class="search-kbd"><kbd>Ctrl</kbd><kbd>K</kbd></span>
+        <button class="search-clear" id="searchClear" aria-label="Clear search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
     </div>
+
     <dl class="spec" aria-label="What this site sends over the network">
       <div class="spec-row"><dt>Files uploaded</dt><dd>0</dd></div>
       <div class="spec-row"><dt>Accounts</dt><dd>0</dd></div>
       <div class="spec-row"><dt>Third-party requests</dt><dd>0</dd></div>
       <div class="spec-row"><dt>Works offline</dt><dd class="yes">yes</dd></div>
     </dl>
-  </div>
-</header>
+  </header>
 
-<div class="container">
-
-  <div class="search-wrap">
-    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-    <label class="visually-hidden" for="searchInput">Search tools</label>
-    <input type="search" id="searchInput" placeholder="Search 18 tools…" autocomplete="off"/>
-    <span class="search-kbd"><kbd>Ctrl</kbd><kbd>K</kbd></span>
-    <button class="search-clear" id="searchClear" aria-label="Clear search">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-    </button>
-  </div>
-
-  <!-- Pinned + recently used tools. Filled by js/main.js from localStorage;
-       stays empty and hidden on a first visit. -->
+  <!-- Pinned + recently used tools. Filled by js/main.js from localStorage. -->
   <div id="shelf" hidden></div>
 
   <div class="cat-pills" id="catPills" role="group" aria-label="Filter by category">
@@ -89,228 +85,190 @@
     <p>Try “PDF”, “image”, “JSON”, “password” or “percent”.</p>
   </div>
 
-  <!-- The index. Rows, not cards: this is a table of contents for a toolbox.
-       Row numbers are a CSS counter, so filtering renumbers them for free. -->
-  <div class="index">
+  <!-- The bento. Five tiles are the real tool, running: they call the same pure
+       functions from js/tools-core.js that the full pages call. -->
+  <div class="bento" id="bento">
 
-  <section class="tools-section" id="image" data-cat="image">
-    <h2 class="section-title">Image <span class="count">4</span></h2>
-    <ul class="index-list">
-      <li class="tool-cell" data-tool="img-compress">
-        <a href="image/compress/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5-11 11"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">Image Compressor</h3>
-            <p class="tool-card-desc">Shrink JPG, PNG and WebP with a live before/after and real size numbers.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-      <li class="tool-cell" data-tool="img-resize">
-        <a href="image/resize/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">Image Resizer</h3>
-            <p class="tool-card-desc">Resize by pixels or percentage, aspect lock, one-click social presets.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-      <li class="tool-cell" data-tool="img-convert">
-        <a href="image/convert/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">Image Converter</h3>
-            <p class="tool-card-desc">JPG, PNG, WebP and AVIF in any direction, with a size comparison.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-      <li class="tool-cell" data-tool="img-bg">
-        <a href="image/bg-remove/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">Background Remover</h3>
-            <p class="tool-card-desc">Click a background colour to key it out and export a transparent PNG.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-    </ul>
-  </section>
+    <div class="tool-cell tile tile-6 tile-tall" data-tool="dev-pass" data-cat="dev">
+      <a href="developer/password/index.html" class="tile-link">
+        <h3 class="tool-card-name">Password Generator</h3>
+        <p class="tool-card-desc">Crypto-random passwords and passphrases, with entropy and crack-time.</p>
+      </a>
+      <div class="live">
+        <output class="live-value mono" id="livePass">—</output>
+        <div class="meter" id="livePassMeter" data-score="0"><i></i><i></i><i></i><i></i></div>
+        <p class="live-status" id="livePassBits"></p>
+        <div class="live-actions">
+          <button class="btn btn-primary btn-sm" id="livePassRoll" type="button">Regenerate</button>
+          <button class="btn btn-secondary btn-sm" id="livePassCopy" type="button">Copy</button>
+        </div>
+      </div>
+    </div>
 
-  <section class="tools-section" id="pdf" data-cat="pdf">
-    <h2 class="section-title">PDF <span class="count">2</span></h2>
-    <ul class="index-list">
-      <li class="tool-cell" data-tool="pdf-compress">
-        <a href="pdf/compress/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">PDF Compressor</h3>
-            <p class="tool-card-desc">Re-renders pages at a chosen quality to genuinely shrink scans.</p>
+    <div class="tool-cell tile tile-6 tile-tall" data-tool="img-compress" data-cat="image">
+      <a href="image/compress/index.html" class="tile-link">
+        <h3 class="tool-card-name">Image Compressor</h3>
+        <p class="tool-card-desc">Shrink JPG, PNG and WebP with a live before/after and real numbers.</p>
+      </a>
+      <div class="live">
+        <div class="live-drop" id="liveDrop" aria-label="Drop an image to compress it here">
+          <input type="file" id="liveDropInput" accept="image/*" hidden/>
+          <img id="liveDropImg" alt="" hidden/>
+          <span class="live-drop-hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg>
+            Drop an image — it never leaves this tab
           </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-      <li class="tool-cell" data-tool="pdf-merge">
-        <a href="pdf/merge/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m8 6 4-4 4 4"/><path d="M12 2v10.3"/><path d="M4 11v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">PDF Merger</h3>
-            <p class="tool-card-desc">Combine any number of PDFs, drag to reorder, page counts before you merge.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-    </ul>
-  </section>
+        </div>
+        <p class="live-status" id="liveDropOut">JPG, PNG or WebP</p>
+      </div>
+    </div>
 
-  <section class="tools-section" id="text" data-cat="text">
-    <h2 class="section-title">Text <span class="count">4</span></h2>
-    <ul class="index-list">
-      <li class="tool-cell" data-tool="txt-words">
-        <a href="text/word-counter/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">Word Counter</h3>
-            <p class="tool-card-desc">Live words, characters and sentences, plus reading time and keyword density.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-      <li class="tool-cell" data-tool="txt-case">
-        <a href="text/case-converter/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m3 15 4-8 4 8"/><path d="M4 13h6"/><path d="M15 11v4a2 2 0 0 0 4 0v-4a2 2 0 0 0-4 0Z"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">Case Converter</h3>
-            <p class="tool-card-desc">Eleven cases: Title, camelCase, snake_case, kebab-case, CONSTANT_CASE and more.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-      <li class="tool-cell" data-tool="txt-lorem">
-        <a href="text/lorem-ipsum/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">Lorem Ipsum Generator</h3>
-            <p class="tool-card-desc">Placeholder text by paragraph, sentence or word — plain or wrapped in HTML.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-      <li class="tool-cell" data-tool="txt-diff">
-        <a href="text/diff/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">Text Diff Checker</h3>
-            <p class="tool-card-desc">Real line-and-word diff with change counts and whitespace or case ignoring.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-    </ul>
-  </section>
+    <div class="tool-cell tile tile-3" data-tool="dev-qr" data-cat="dev">
+      <a href="developer/qr-code/index.html" class="tile-link">
+        <h3 class="tool-card-name">QR Code Generator</h3>
+        <p class="tool-card-desc">Any size, colour and error-correction level. PNG or crisp SVG.</p>
+      </a>
+      <div class="live live-center">
+        <div class="qr-frame" id="liveQr" aria-hidden="true"></div>
+      </div>
+    </div>
 
-  <section class="tools-section" id="calculators" data-cat="calc">
-    <h2 class="section-title">Calculators <span class="count">4</span></h2>
-    <ul class="index-list">
-      <li class="tool-cell" data-tool="calc-emi">
-        <a href="calculators/emi/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">EMI Calculator</h3>
-            <p class="tool-card-desc">Monthly EMI, total interest and a full amortisation schedule you can export.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-      <li class="tool-cell" data-tool="calc-gst">
-        <a href="calculators/gst/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"/><path d="M14 2v6h6"/><path d="M3 15h6"/><path d="M6 12v6"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">GST Calculator</h3>
-            <p class="tool-card-desc">Add or remove GST at any slab, with the CGST/SGST or IGST split.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-      <li class="tool-cell" data-tool="calc-age">
-        <a href="calculators/age/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">Age Calculator</h3>
-            <p class="tool-card-desc">Exact age in years, months and days, with totals and a birthday countdown.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-      <li class="tool-cell" data-tool="calc-pct">
-        <a href="calculators/percentage/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">Percentage Calculator</h3>
-            <p class="tool-card-desc">Five modes: percent of, what percent, change, reverse and apply.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-    </ul>
-  </section>
+    <div class="tool-cell tile tile-5" data-tool="txt-words" data-cat="text">
+      <a href="text/word-counter/index.html" class="tile-link">
+        <h3 class="tool-card-name">Word Counter</h3>
+        <p class="tool-card-desc">Words, characters, sentences, reading time and keyword density.</p>
+      </a>
+      <div class="live">
+        <textarea class="live-input" id="liveText" rows="2" spellcheck="false"
+          aria-label="Type to count words">Type here and watch it count.</textarea>
+        <p class="live-status" id="liveTextOut"></p>
+      </div>
+    </div>
 
-  <section class="tools-section" id="developer" data-cat="dev">
-    <h2 class="section-title">Developer <span class="count">4</span></h2>
-    <ul class="index-list">
-      <li class="tool-cell" data-tool="dev-json">
-        <a href="developer/json-formatter/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">JSON Formatter</h3>
-            <p class="tool-card-desc">Prettify, minify, validate and sort keys — errors point at the exact line.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-      <li class="tool-cell" data-tool="dev-b64">
-        <a href="developer/base64/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">Base64 Encoder / Decoder</h3>
-            <p class="tool-card-desc">Unicode-safe both ways, plus URL-safe output and file-to-data-URI.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-      <li class="tool-cell" data-tool="dev-pass">
-        <a href="developer/password/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m21 2-2 2m-1.5 1.5L4 19.5a2.828 2.828 0 1 0 4 4L21.5 10.5m-3-3L21 10M15.5 5.5 17 7"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">Password Generator</h3>
-            <p class="tool-card-desc">Crypto-random passwords and passphrases with entropy and crack-time.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-      <li class="tool-cell" data-tool="dev-qr">
-        <a href="developer/qr-code/index.html" class="tool-card">
-          <span class="row-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
-          <span class="row-body">
-            <h3 class="tool-card-name">QR Code Generator</h3>
-            <p class="tool-card-desc">Size, colour and error-correction control, with PNG or crisp SVG output.</p>
-          </span>
-          <span class="row-go" aria-hidden="true">→</span>
-        </a>
-      </li>
-    </ul>
-  </section>
+    <div class="tool-cell tile tile-4" data-tool="dev-json" data-cat="dev">
+      <a href="developer/json-formatter/index.html" class="tile-link">
+        <h3 class="tool-card-name">JSON Formatter</h3>
+        <p class="tool-card-desc">Prettify, minify, validate and sort keys, with exact error positions.</p>
+      </a>
+      <div class="live">
+        <textarea class="live-input mono" id="liveJson" rows="2" spellcheck="false"
+          aria-label="Paste JSON to validate">{"name":"Nought","tools":18}</textarea>
+        <p class="live-status" id="liveJsonOut"></p>
+      </div>
+    </div>
 
-  </div><!-- index -->
+    <div class="tool-cell tile tile-3" data-tool="img-resize" data-cat="image">
+      <a href="image/resize/index.html" class="tile-link">
+        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span>
+        <h3 class="tool-card-name">Image Resizer</h3>
+        <p class="tool-card-desc">Pixels or percentage, aspect lock, social presets.</p>
+      </a>
+    </div>
+
+    <div class="tool-cell tile tile-3" data-tool="img-convert" data-cat="image">
+      <a href="image/convert/index.html" class="tile-link">
+        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg></span>
+        <h3 class="tool-card-name">Image Converter</h3>
+        <p class="tool-card-desc">JPG, PNG, WebP and AVIF in any direction.</p>
+      </a>
+    </div>
+
+    <div class="tool-cell tile tile-3" data-tool="img-bg" data-cat="image">
+      <a href="image/bg-remove/index.html" class="tile-link">
+        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg></span>
+        <h3 class="tool-card-name">Background Remover</h3>
+        <p class="tool-card-desc">Key out a colour, export a transparent PNG.</p>
+      </a>
+    </div>
+
+    <div class="tool-cell tile tile-3" data-tool="pdf-merge" data-cat="pdf">
+      <a href="pdf/merge/index.html" class="tile-link">
+        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m8 6 4-4 4 4"/><path d="M12 2v10.3"/><path d="M4 11v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9"/></svg></span>
+        <h3 class="tool-card-name">PDF Merger</h3>
+        <p class="tool-card-desc">Combine PDFs, drag to reorder, see page counts.</p>
+      </a>
+    </div>
+
+    <div class="tool-cell tile tile-3" data-tool="pdf-compress" data-cat="pdf">
+      <a href="pdf/compress/index.html" class="tile-link">
+        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+        <h3 class="tool-card-name">PDF Compressor</h3>
+        <p class="tool-card-desc">Re-render pages to genuinely shrink scans.</p>
+      </a>
+    </div>
+
+    <div class="tool-cell tile tile-3" data-tool="txt-case" data-cat="text">
+      <a href="text/case-converter/index.html" class="tile-link">
+        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m3 15 4-8 4 8"/><path d="M4 13h6"/><path d="M15 11v4a2 2 0 0 0 4 0v-4a2 2 0 0 0-4 0Z"/></svg></span>
+        <h3 class="tool-card-name">Case Converter</h3>
+        <p class="tool-card-desc">Eleven cases, camelCase and snake_case included.</p>
+      </a>
+    </div>
+
+    <div class="tool-cell tile tile-3" data-tool="txt-lorem" data-cat="text">
+      <a href="text/lorem-ipsum/index.html" class="tile-link">
+        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+        <h3 class="tool-card-name">Lorem Ipsum Generator</h3>
+        <p class="tool-card-desc">Paragraphs, sentences or words — plain or HTML.</p>
+      </a>
+    </div>
+
+    <div class="tool-cell tile tile-3" data-tool="txt-diff" data-cat="text">
+      <a href="text/diff/index.html" class="tile-link">
+        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg></span>
+        <h3 class="tool-card-name">Text Diff Checker</h3>
+        <p class="tool-card-desc">Real line-and-word diff with change counts.</p>
+      </a>
+    </div>
+
+    <div class="tool-cell tile tile-3" data-tool="calc-emi" data-cat="calc">
+      <a href="calculators/emi/index.html" class="tile-link">
+        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></span>
+        <h3 class="tool-card-name">EMI Calculator</h3>
+        <p class="tool-card-desc">Instalment, interest and a full amortisation table.</p>
+      </a>
+    </div>
+
+    <div class="tool-cell tile tile-3" data-tool="calc-gst" data-cat="calc">
+      <a href="calculators/gst/index.html" class="tile-link">
+        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"/><path d="M14 2v6h6"/><path d="M3 15h6"/><path d="M6 12v6"/></svg></span>
+        <h3 class="tool-card-name">GST Calculator</h3>
+        <p class="tool-card-desc">Add or remove GST with the CGST/SGST split.</p>
+      </a>
+    </div>
+
+    <div class="tool-cell tile tile-3" data-tool="calc-age" data-cat="calc">
+      <a href="calculators/age/index.html" class="tile-link">
+        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+        <h3 class="tool-card-name">Age Calculator</h3>
+        <p class="tool-card-desc">Exact years, months and days, plus a countdown.</p>
+      </a>
+    </div>
+
+    <div class="tool-cell tile tile-3" data-tool="calc-pct" data-cat="calc">
+      <a href="calculators/percentage/index.html" class="tile-link">
+        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></span>
+        <h3 class="tool-card-name">Percentage Calculator</h3>
+        <p class="tool-card-desc">Five modes, including reverse percentage.</p>
+      </a>
+    </div>
+
+    <div class="tool-cell tile tile-3" data-tool="dev-b64" data-cat="dev">
+      <a href="developer/base64/index.html" class="tile-link">
+        <span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+        <h3 class="tool-card-name">Base64 Encoder / Decoder</h3>
+        <p class="tool-card-desc">Unicode-safe, URL-safe, and file-to-data-URI.</p>
+      </a>
+    </div>
+
+  </div><!-- bento -->
 
   <section class="faq-section">
     <h2>Questions</h2>
     <div class="faq-item">
       <button class="faq-q">Are my files uploaded to a server?
         <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
-      <div class="faq-a"><div>No. Every tool runs in your browser using JavaScript, Canvas and the Web Crypto API. Your images, PDFs and text never leave your device. Nought loads nothing from a third party either — the fonts and the PDF, QR and zip libraries are all served from this site.</div></div>
+      <div class="faq-a"><div>No. Every tool runs in your browser using JavaScript, Canvas and the Web Crypto API — including the ones running on this page. Your images, PDFs and text never leave your device, and nothing is loaded from a third party: the fonts and the PDF, QR and zip libraries are all served from this site.</div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q">Can I install it and use it offline?
@@ -325,7 +283,7 @@
     <div class="faq-item">
       <button class="faq-q">Can I keep my favourite tools at the top?
         <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
-      <div class="faq-a"><div>Hover any row and press the pin. Pinned tools, and the last five you opened, appear in a strip above the index. It is stored in your browser's local storage only — there is no account and nothing is sent anywhere.</div></div>
+      <div class="faq-a"><div>Hover any tile and press the pin. Pinned tools, and the last five you opened, appear in a strip above the grid. It is stored in your browser's local storage only — there is no account and nothing is sent anywhere.</div></div>
     </div>
     <div class="faq-item">
       <button class="faq-q">Is there a keyboard shortcut to find a tool?
@@ -369,53 +327,7 @@
 
 <script src="js/tools-core.js"></script>
 <script src="js/main.js"></script>
-<script>
-(function () {
-  const searchInput = document.getElementById('searchInput');
-  const searchClear = document.getElementById('searchClear');
-  const noResults = document.getElementById('noResults');
-  const sections = document.querySelectorAll('.tools-section');
-  const pills = document.querySelectorAll('.cat-pill');
-
-  function filterTools() {
-    const query = searchInput.value.trim().toLowerCase();
-    const cat = document.querySelector('.cat-pill[aria-pressed="true"]').dataset.cat;
-    let visible = 0;
-    sections.forEach((section) => {
-      const catMatch = cat === 'all' || section.dataset.cat === cat;
-      let shown = 0;
-      // The row is the list item — hiding the inner <a> would leave a dead rule.
-      section.querySelectorAll('.tool-cell').forEach((cell) => {
-        const match = catMatch && (!query || cell.textContent.toLowerCase().includes(query));
-        cell.hidden = !match;
-        if (match) { shown++; visible++; }
-      });
-      section.hidden = shown === 0;
-      const count = section.querySelector('.count');
-      if (count) count.textContent = shown;
-    });
-    noResults.style.display = visible === 0 ? 'block' : 'none';
-    searchClear.classList.toggle('visible', query.length > 0);
-  }
-
-  pills.forEach((pill) => pill.addEventListener('click', () => {
-    pills.forEach((p) => p.setAttribute('aria-pressed', String(p === pill)));
-    filterTools();
-  }));
-
-  searchInput.addEventListener('input', filterTools);
-  searchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') { searchInput.value = ''; filterTools(); }
-  });
-  searchClear.addEventListener('click', () => {
-    searchInput.value = ''; filterTools(); searchInput.focus();
-  });
-
-  // Deep link: index.html?q=compress pre-fills the search.
-  const q = new URLSearchParams(location.search).get('q');
-  if (q) { searchInput.value = q; }
-  filterTools();
-})();
-</script>
+<script src="vendor/qrcode.min.js" defer></script>
+<script src="js/home.js" defer></script>
 </body>
 </html>
