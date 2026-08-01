@@ -1,35 +1,62 @@
-/* ===== TOOLBOX DESIGN SYSTEM =====
+/* ===== NOUGHT DESIGN SYSTEM =====
    Spacing scale: 4 / 8 / 12 / 16 / 24 / 32. Type scale: 0.72 → 0.98rem for UI,
-   larger only for the hero and page titles. Keep new rules on this grid. */
+   larger only for the hero and page titles. Keep new rules on this grid.
+
+   Three self-hosted variable faces, no third-party request:
+     display — Bricolage Grotesque, headings and the hero only
+     sans    — Public Sans, all UI text
+     mono    — JetBrains Mono, code, numbers and the wordmark (its slashed zero
+               is the logo, so the brand and the output share one glyph) */
+
+@font-face {
+  font-family: 'Bricolage Grotesque'; font-style: normal;
+  font-weight: 400 800; font-display: swap;
+  src: url('../assets/fonts/bricolage.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Public Sans'; font-style: normal;
+  font-weight: 400 700; font-display: swap;
+  src: url('../assets/fonts/publicsans.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono'; font-style: normal;
+  font-weight: 400 600; font-display: swap;
+  src: url('../assets/fonts/jetbrainsmono.woff2') format('woff2');
+}
 
 /* Theme: dark by default, light via [data-theme="light"] or system pref.
    html gets data-theme stamped by js/theme.js before paint. */
 :root {
-  --bg-primary:    #09090b;
-  --bg-secondary:  #121215;
-  --bg-card:       #18181b;
-  --bg-card-hover: #222226;
-  --bg-input:      #121215;
+  --font-sans:    'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Bricolage Grotesque', var(--font-sans);
+  --font-mono:    'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --border:        #27272a;
-  --border-hover:  #3f3f46;
-  --border-active: #6366f1;
+  --bg-primary:    #0b0b0c;
+  --bg-secondary:  #121214;
+  --bg-card:       #161618;
+  --bg-card-hover: #1e1e21;
+  --bg-input:      #121214;
 
-  --accent:        #6366f1;
-  --accent-hover:  #4f46e5;
-  --accent-light:  rgba(99, 102, 241, 0.14);
-  --accent-fg:     #ffffff;
+  --border:        #26262a;
+  --border-hover:  #3a3a40;
+  --border-active: #ffb020;
 
-  --success:       #10b981;
-  --success-light: rgba(16, 185, 129, 0.12);
+  --accent:        #ffb020;
+  --accent-hover:  #ffc24d;
+  --accent-ink:    #ffb020;   /* accent as *text*: darkened in light mode */
+  --accent-light:  rgba(255, 176, 32, 0.13);
+  --accent-fg:     #0b0b0c;
+
+  --success:       #34d399;
+  --success-light: rgba(52, 211, 153, 0.12);
   --danger:        #f87171;
   --danger-light:  rgba(248, 113, 113, 0.12);
   --warning:       #fbbf24;
 
-  --text-primary:   #f4f4f5;
+  --text-primary:   #fafaf9;
   --text-secondary: #a1a1aa;
   --text-muted:     #71717a;
-  --text-invert:    #09090b;
+  --text-invert:    #0b0b0c;
 
   --radius-sm: 6px;
   --radius-md: 9px;
@@ -42,26 +69,30 @@
 
   --nav-h: 54px;
   --chev: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E");
-  --checker: repeating-conic-gradient(#27272a 0% 25%, #18181b 0% 50%) 50% / 16px 16px;
+  --checker: repeating-conic-gradient(#26262a 0% 25%, #161618 0% 50%) 50% / 16px 16px;
   color-scheme: dark;
 }
 
 html[data-theme="light"] {
-  --bg-primary:    #ffffff;
-  --bg-secondary:  #f7f8fa;
+  --bg-primary:    #fcfcfb;
+  --bg-secondary:  #f4f4f2;
   --bg-card:       #ffffff;
-  --bg-card-hover: #f4f5f7;
+  --bg-card-hover: #f6f6f4;
   --bg-input:      #ffffff;
 
-  --border:        #e6e7ea;
-  --border-hover:  #d3d4d8;
-  --border-active: #6366f1;
+  --border:        #e6e5e1;
+  --border-hover:  #d2d1cc;
+  --border-active: #b07400;
 
-  --accent-light:  rgba(99, 102, 241, 0.09);
+  /* Amber fills stay amber (they carry near-black text), but amber *as text*
+     fails contrast on white — so accent-ink darkens and the focus ring with it. */
+  --accent-ink:    #8a5a00;
+  --accent-hover:  #f0a000;
+  --accent-light:  rgba(255, 176, 32, 0.16);
   --danger:        #dc2626;
   --danger-light:  rgba(220, 38, 38, 0.07);
-  --success:       #059669;
-  --success-light: rgba(5, 150, 105, 0.09);
+  --success:       #047857;
+  --success-light: rgba(4, 120, 87, 0.09);
 
   --text-primary:   #18181b;
   --text-secondary: #52525b;
@@ -71,7 +102,7 @@ html[data-theme="light"] {
   --shadow-sm:  0 1px 2px rgba(9,9,11,0.05);
   --shadow-md:  0 3px 12px rgba(9,9,11,0.06);
   --shadow-lg:  0 10px 34px rgba(9,9,11,0.09);
-  --checker: repeating-conic-gradient(#e6e7ea 0% 25%, #f7f8fa 0% 50%) 50% / 16px 16px;
+  --checker: repeating-conic-gradient(#e6e5e1 0% 25%, #f4f4f2 0% 50%) 50% / 16px 16px;
   color-scheme: light;
 }
 
@@ -83,7 +114,7 @@ html[data-theme="light"] {
 
 html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 12px); }
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-sans);
   background: var(--bg-primary);
   color: var(--text-primary);
   font-size: 15px;
@@ -99,11 +130,13 @@ a { color: inherit; text-decoration: none; }
 button { cursor: pointer; font-family: inherit; color: inherit; }
 input, textarea, select { font-family: inherit; color: inherit; }
 h1,h2,h3,h4 { line-height: 1.25; }
-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.92em; }
+/* Display face carries the headline voice; UI text stays on the sans. */
+h1, h2, .tool-page-title { font-family: var(--font-display); }
+code { font-family: var(--font-mono); font-size: 0.92em; }
 
 /* Visible keyboard focus everywhere (a11y) */
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-ink);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
@@ -146,17 +179,21 @@ nav {
   display: flex; align-items: center; gap: 16px;
   height: var(--nav-h);
 }
+/* Wordmark: set in the mono face so it shares the slashed-zero glyph with the
+   mark beside it. Tracking is opened up rather than tightened — the letterforms
+   are meant to read as an instrument label, not a product logotype. */
 .logo {
-  font-size: 0.98rem; font-weight: 700; letter-spacing: -0.3px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem; font-weight: 600; letter-spacing: 1.6px;
+  text-transform: uppercase;
   display: flex; align-items: center; gap: 8px; flex-shrink: 0;
 }
 .logo-icon {
-  width: 24px; height: 24px; background: var(--bg-card);
-  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  width: 20px; height: 20px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.logo-icon img { width: 14px; height: 14px; display: block; }
+.logo-icon img { width: 20px; height: 20px; display: block; }
 .nav-links { display: flex; gap: 2px; margin-left: auto; }
 .nav-links a {
   font-size: 0.83rem; font-weight: 500; color: var(--text-secondary);
@@ -196,8 +233,27 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
   .nav-actions { margin-left: auto; }
 }
 
-/* ===== HERO (deliberately the one big thing on the page) ===== */
-.hero { padding: 64px 0 32px; text-align: center; max-width: 720px; margin: 0 auto; }
+/* ===== HERO (deliberately the one big thing on the page) =====
+   Backdrop: a hairline measurement grid fading out downward, with one warm
+   amber bloom off to the side. Same treatment as the share card, so a link
+   preview and the page it opens read as one object. Purely decorative and
+   pointer-transparent, so it never intercepts a click. */
+.hero { padding: 64px 0 32px; text-align: center; max-width: 720px; margin: 0 auto; position: relative; }
+.hero::before, .hero::after { content: ''; position: absolute; pointer-events: none; z-index: -1; }
+.hero::before {
+  inset: -100px -50vw 0;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--text-primary) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--text-primary) 5%, transparent) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 20%, #000 0%, transparent 72%);
+  mask-image: radial-gradient(120% 90% at 50% 20%, #000 0%, transparent 72%);
+}
+.hero::after {
+  width: 620px; height: 620px; top: -300px; right: -180px; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 15%, transparent) 0%, transparent 62%);
+}
+@media(max-width: 720px) { .hero::after { right: -320px; } }
 .hero-badge {
   display: inline-flex; align-items: center; gap: 8px;
   background: var(--bg-card); border: 1px solid var(--border);
@@ -209,19 +265,27 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
   box-shadow: 0 0 0 3px var(--success-light);
 }
 .hero h1 {
-  font-size: clamp(1.9rem, 4.4vw, 3rem);
-  font-weight: 700; line-height: 1.12; letter-spacing: -1.2px;
+  font-size: clamp(2.1rem, 5vw, 3.4rem);
+  font-weight: 800; line-height: 1.04; letter-spacing: -1.8px;
   margin-bottom: 14px;
 }
-.hero h1 .sub { color: var(--text-secondary); font-weight: 500; }
+.hero h1 .sub { color: var(--accent); }
 .hero p { font-size: 0.98rem; color: var(--text-secondary); max-width: 500px; margin: 0 auto 26px; }
 .hero-stats {
   display: flex; justify-content: center; gap: 28px; flex-wrap: wrap;
   margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--border);
 }
 .stat { text-align: center; }
-.stat-num { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.4px; }
-.stat-label { font-size: 0.74rem; color: var(--text-muted); font-weight: 500; margin-top: 1px; }
+/* Mono numerals: the whole brand argument is a row of zeros, so they get the
+   face whose zero is the logo. */
+.stat-num {
+  font-family: var(--font-mono); font-size: 1.15rem; font-weight: 600;
+  letter-spacing: -0.5px; font-variant-numeric: tabular-nums;
+}
+.stat-label {
+  font-size: 0.7rem; color: var(--text-muted); font-weight: 500; margin-top: 2px;
+  text-transform: uppercase; letter-spacing: 0.6px;
+}
 
 /* ===== SEARCH ===== */
 .search-wrap { max-width: 460px; margin: 0 auto; position: relative; }
@@ -242,7 +306,7 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
   display: flex; gap: 3px; pointer-events: none;
 }
 kbd {
-  font-family: ui-monospace, SFMono-Regular, monospace; font-size: 0.66rem;
+  font-family: var(--font-mono); font-size: 0.66rem;
   padding: 2px 5px; border-radius: 4px; background: var(--bg-secondary);
   border: 1px solid var(--border); color: var(--text-muted); line-height: 1.3;
 }
@@ -281,11 +345,14 @@ kbd {
   border: 1px solid var(--border); border-radius: 99px; padding: 1px 7px;
 }
 
-/* ===== TOOLS GRID ===== */
+/* ===== TOOLS GRID =====
+   Each cell is a wrapper, not the link: the pin toggle is a real <button> and
+   cannot legally nest inside the card's <a>. */
 .tools-section { margin-bottom: 32px; scroll-margin-top: 72px; }
 .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(226px, 1fr)); gap: 12px; }
+.tool-cell { position: relative; display: flex; }
 .tool-card {
-  position: relative;
+  position: relative; flex: 1;
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius-md); padding: 15px;
   transition: var(--transition);
@@ -302,11 +369,90 @@ kbd {
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .tool-card-icon svg { width: 15px; height: 15px; }
-html[data-theme="light"] .tool-card-icon { background: var(--accent-light); border-color: transparent; color: var(--accent-hover); }
+/* The card only warms up on approach — a wall of amber icons would flatten the
+   grid into noise. */
+.tool-card:hover .tool-card-icon {
+  background: var(--accent-light); border-color: transparent; color: var(--accent-ink);
+}
+html[data-theme="light"] .tool-card-icon { background: var(--accent-light); border-color: transparent; color: var(--accent-ink); }
 .tool-card-name { font-size: 0.89rem; font-weight: 600; letter-spacing: -0.1px; }
 .tool-card-desc { font-size: 0.79rem; color: var(--text-secondary); line-height: 1.45; flex: 1; }
 .tool-card-arrow { color: var(--text-muted); width: 13px; height: 13px; transition: var(--transition); }
 .tool-card:hover .tool-card-arrow { color: var(--text-primary); transform: translateX(2px); }
+
+/* ===== PIN TOGGLE =====
+   Sits over the card's top-right corner. Always rendered so the hit target is
+   stable, but only visible on hover/focus — or permanently once pinned. */
+.pin-btn {
+  position: absolute; top: 9px; right: 9px; z-index: 2;
+  width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  background: transparent; border: 1px solid transparent; border-radius: var(--radius-sm);
+  color: var(--text-muted); opacity: 0; transition: var(--transition);
+}
+.pin-btn svg { width: 14px; height: 14px; }
+.tool-cell:hover .pin-btn, .pin-btn:focus-visible { opacity: 1; }
+.pin-btn:hover { color: var(--text-primary); background: var(--bg-secondary); border-color: var(--border); }
+.pin-btn[aria-pressed="true"] { opacity: 1; color: var(--accent-ink); }
+.pin-btn[aria-pressed="true"] svg { fill: currentColor; }
+/* No hover on touch: the toggle would otherwise be invisible and unreachable. */
+@media (hover: none) { .pin-btn { opacity: 1; } }
+
+/* ===== JUMP BACK IN =====
+   Pinned + recently used tools, from localStorage. Hidden until there is
+   something to show, so a first visit is not littered with empty shelves. */
+.shelf { margin: 26px 0 4px; }
+.shelf-head {
+  display: flex; align-items: baseline; gap: 10px; margin-bottom: 9px;
+}
+.shelf-title {
+  font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);
+}
+.shelf-clear {
+  margin-left: auto; background: none; border: none; padding: 2px 4px;
+  font-size: 0.72rem; color: var(--text-muted); border-radius: 4px;
+}
+.shelf-clear:hover { color: var(--danger); background: var(--danger-light); }
+.shelf-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.shelf-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 13px 7px 11px; border-radius: 99px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  font-size: 0.82rem; font-weight: 500; transition: var(--transition);
+}
+.shelf-chip svg { width: 14px; height: 14px; color: var(--text-muted); flex-shrink: 0; }
+.shelf-chip:hover {
+  border-color: var(--accent); background: var(--accent-light);
+  transform: translateY(-1px);
+}
+.shelf-chip:hover svg { color: var(--accent-ink); }
+.shelf-chip.pinned { border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+.shelf-chip.pinned svg { color: var(--accent-ink); fill: currentColor; }
+
+/* ===== INSTALL BUTTON =====
+   Injected into the nav only when the browser fires beforeinstallprompt, so it
+   never advertises an action the platform cannot perform. */
+.install-btn {
+  display: none; align-items: center; gap: 6px;
+  padding: 5px 11px; border-radius: 99px;
+  background: var(--accent); color: var(--accent-fg); border: 1px solid var(--accent);
+  font-size: 0.78rem; font-weight: 600; white-space: nowrap;
+  transition: var(--transition);
+}
+.install-btn.show { display: inline-flex; }
+.install-btn svg { width: 13px; height: 13px; }
+.install-btn:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+@media(max-width: 480px) { .install-btn .install-label { display: none; } }
+
+/* Offline pill in the nav: reassurance, not an error — everything still works. */
+.offline-pill {
+  display: none; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.3px;
+  padding: 4px 10px; border-radius: 99px;
+  border: 1px solid var(--border); color: var(--text-secondary); background: var(--bg-card);
+}
+html.is-offline .offline-pill { display: inline-flex; }
+.offline-pill .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--warning); }
 
 /* ===== TOOL PAGE LAYOUT ===== */
 .tool-page-header { padding: 26px 0 18px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
@@ -396,7 +542,7 @@ html[data-theme="dark"] .input-field { background: var(--bg-secondary); }
 .input-field.invalid { border-color: var(--danger); }
 textarea.input-field { resize: vertical; min-height: 120px; line-height: 1.5; }
 .mono, textarea.mono, .input-field.mono {
-  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 0.82rem;
 }
 select.input-field { appearance: none; padding-right: 30px;
@@ -631,7 +777,7 @@ html[data-theme="light"] .segmented button[aria-pressed="true"] { background: #f
 /* ===== DIFF OUTPUT ===== */
 .diff-out {
   border: 1px solid var(--border); border-radius: var(--radius-md);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.79rem;
+  font-family: var(--font-mono); font-size: 0.79rem;
   line-height: 1.6; overflow: auto; max-height: 400px; background: var(--bg-secondary);
 }
 .diff-row { display: flex; }
@@ -653,7 +799,7 @@ html[data-theme="light"] .segmented button[aria-pressed="true"] { background: #f
 .code-out {
   background: var(--bg-secondary); border: 1px solid var(--border);
   border-radius: var(--radius-md); padding: 11px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.79rem;
+  font-family: var(--font-mono); font-size: 0.79rem;
   line-height: 1.55; white-space: pre-wrap; word-break: break-word;
   overflow: auto; max-height: 360px; margin: 0;
 }
@@ -717,8 +863,7 @@ html[data-theme="light"] .code-out .b { color: #7e22ce; }
 footer { border-top: 1px solid var(--border); padding: 28px 20px; margin-top: 36px; background: var(--bg-secondary); }
 .footer-inner { max-width: 1080px; margin: 0 auto; }
 .footer-grid { display: grid; grid-template-columns: 1.8fr repeat(5, 1fr); gap: 24px; margin-bottom: 22px; }
-.footer-brand .logo-icon { width: 22px; height: 22px; }
-.footer-brand .logo-icon img { width: 13px; height: 13px; }
+.footer-brand .logo-icon, .footer-brand .logo-icon img { width: 18px; height: 18px; }
 .footer-brand p { font-size: 0.79rem; color: var(--text-muted); line-height: 1.55; margin-top: 8px; max-width: 260px; }
 .footer-col h4 { font-size: 0.75rem; font-weight: 600; margin-bottom: 9px; }
 .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }

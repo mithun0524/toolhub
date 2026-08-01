@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 /* Point the site at a real domain.
- *   node tools/set-domain.js https://toolbox.example.org
+ *   node tools/set-domain.js https://nought.example.org
  *
  * Rewrites sitemap.xml and robots.txt, and replaces every page's relative
- * canonical (and og:url) with an absolute one — relative canonicals are legal
- * but ambiguous the moment the site answers on more than one hostname.
+ * canonical, og:url and og:image with absolute ones — relative canonicals are
+ * legal but ambiguous the moment the site answers on more than one hostname,
+ * and og:image is the one that actually *must* be absolute: Twitter, Slack and
+ * WhatsApp all drop a relative preview image.
  * Re-running with a different domain is safe: it replaces, never appends.
  */
 const fs = require('node:fs');
@@ -80,6 +82,9 @@ for (const p of PAGES) {
     html = html.replace(/(<meta property="og:type"[^>]*>)/,
       `$1\n  <meta property="og:url" content="${absolute}"/>`);
   }
+
+  html = html.replace(/<meta property="og:image" content="[^"]*"\/?>/,
+    `<meta property="og:image" content="${origin}/assets/og.png"/>`);
 
   if (html !== before) { fs.writeFileSync(file, html); changed++; }
 }

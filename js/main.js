@@ -63,6 +63,47 @@
   const svg = (paths, size) =>
     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"${size ? ` width="${size}" height="${size}"` : ''} aria-hidden="true">${paths}</svg>`;
 
+  const PIN_PATH = '<path d="M12 17v5"/><path d="M9 10.8V4h6v6.8l2.5 3.2H6.5Z"/>';
+
+  /* ---------- local memory (recents + pins) ----------
+     Plain localStorage, no account and nothing to sync. Every read is defensive:
+     Safari private mode throws on access, and a hand-edited value must not be
+     able to break the page. Unknown ids are dropped so a removed tool cannot
+     leave a dead chip behind forever. */
+  const KEY_RECENT = 'nought:recent';
+  const KEY_PINS = 'nought:pins';
+  const MAX_RECENT = 5;
+
+  function readIds(key) {
+    let raw = null;
+    try { raw = localStorage.getItem(key); } catch (e) { return []; }
+    if (!raw) return [];
+    let parsed;
+    try { parsed = JSON.parse(raw); } catch (e) { return []; }
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((id) => typeof id === 'string' && TOOLS.some((t) => t.id === id));
+  }
+  function writeIds(key, ids) {
+    try { localStorage.setItem(key, JSON.stringify(ids)); } catch (e) {}
+  }
+
+  const getRecent = () => readIds(KEY_RECENT);
+  const getPins = () => readIds(KEY_PINS);
+
+  // Most recent first, deduped, capped. Called once per tool-page load.
+  function recordVisit(id) {
+    if (!TOOLS.some((t) => t.id === id)) return;
+    const next = [id].concat(getRecent().filter((x) => x !== id)).slice(0, MAX_RECENT);
+    writeIds(KEY_RECENT, next);
+  }
+  function togglePin(id) {
+    const pins = getPins();
+    const i = pins.indexOf(id);
+    if (i >= 0) pins.splice(i, 1); else pins.unshift(id);
+    writeIds(KEY_PINS, pins);
+    return i < 0;
+  }
+
   /* ---------- toast ---------- */
   function showToast(msg, type) {
     let stack = document.querySelector('.toast-stack');
@@ -271,7 +312,7 @@
   /* ---------- theme ---------- */
   function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
-    try { localStorage.setItem('toolbox-theme', theme); } catch (e) {}
+    try { localStorage.setItem('nought:theme', theme); } catch (e) {}
   }
   function initTheme() {
     document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
@@ -291,6 +332,8 @@
     const actions = document.createElement('div');
     actions.className = 'nav-actions';
     actions.innerHTML =
+      `<span class="offline-pill" title="No network — every tool still works"><span class="dot"></span>offline</span>` +
+      `<button class="install-btn" data-install>${svg('<path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/>')}<span class="install-label">Install</span></button>` +
       `<button class="icon-btn" data-open-palette aria-label="Search tools (press Control or Command K)" title="Search tools  ⌘K">${svg('<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>')}</button>` +
       `<button class="icon-btn theme-toggle" data-theme-toggle aria-label="Toggle colour theme" title="Toggle theme">` +
         `<span class="icon-moon">${svg('<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>')}</span>` +
@@ -465,11 +508,124 @@
     host.innerHTML =
       '<div class="footer-inner"><div class="footer-grid">' +
       '<div class="footer-brand"><div class="logo"><span class="logo-icon">' +
-      `<img src="${ROOT}assets/logo-icon.svg" alt="" width="16" height="16"></span>ToolBox</div>` +
+      `<img src="${ROOT}assets/logo-icon.svg" alt="" width="18" height="18"></span>Nought</div>` +
       '<p>Fast, private utility tools that run entirely in your browser. No uploads, no accounts, no limits.</p></div>' +
       cols + '</div>' +
-      '<div class="footer-bottom"><p>© 2026 ToolBox · All processing happens on your device.</p>' +
+      '<div class="footer-bottom"><p>© 2026 Nought · All processing happens on your device.</p>' +
       `<p><a href="${ROOT}index.html">All tools</a></p></div></div>`;
+  }
+
+  /* ---------- "jump back in" shelf (home page only) ----------
+     Pinned tools first, then recently used ones that are not already pinned.
+     The whole block stays out of the DOM until there is something in it. */
+  function renderShelf() {
+    const host = document.getElementById('shelf');
+    if (!host) return;
+    const byId = (id) => TOOLS.find((t) => t.id === id);
+    const pins = getPins().map(byId).filter(Boolean);
+    const pinned = new Set(pins.map((t) => t.id));
+    const recent = getRecent().map(byId).filter((t) => t && !pinned.has(t.id));
+
+    if (!pins.length && !recent.length) { host.innerHTML = ''; host.hidden = true; return; }
+    host.hidden = false;
+
+    const chip = (t, isPin) =>
+      `<a class="shelf-chip${isPin ? ' pinned' : ''}" href="${ROOT}${t.url}">` +
+      `${svg(isPin ? PIN_PATH : ICONS[t.icon], 14)}${t.name}</a>`;
+
+    host.innerHTML =
+      (pins.length
+        ? '<div class="shelf"><div class="shelf-head"><span class="shelf-title">Pinned</span></div>' +
+          `<div class="shelf-row">${pins.map((t) => chip(t, true)).join('')}</div></div>`
+        : '') +
+      (recent.length
+        ? '<div class="shelf"><div class="shelf-head"><span class="shelf-title">Recently used</span>' +
+          '<button class="shelf-clear" data-clear-recent>Clear</button></div>' +
+          `<div class="shelf-row">${recent.map((t) => chip(t, false)).join('')}</div></div>`
+        : '');
+  }
+
+  function initShelf() {
+    const host = document.getElementById('shelf');
+    if (!host) return;
+    renderShelf();
+    host.addEventListener('click', (e) => {
+      if (!e.target.closest('[data-clear-recent]')) return;
+      writeIds(KEY_RECENT, []);
+      renderShelf();
+      showToast('Recent tools cleared');
+    });
+  }
+
+  /* ---------- pin toggles on the home grid ---------- */
+  function initPins() {
+    const cells = document.querySelectorAll('.tool-cell[data-tool]');
+    if (!cells.length) return;
+    const pins = new Set(getPins());
+
+    cells.forEach((cell) => {
+      const id = cell.dataset.tool;
+      const tool = TOOLS.find((t) => t.id === id);
+      if (!tool) return;
+      const btn = document.createElement('button');
+      btn.className = 'pin-btn';
+      btn.type = 'button';
+      btn.innerHTML = svg(PIN_PATH, 14);
+      const sync = (on) => {
+        btn.setAttribute('aria-pressed', String(on));
+        btn.setAttribute('aria-label', (on ? 'Unpin ' : 'Pin ') + tool.name);
+        btn.title = on ? 'Unpin' : 'Pin to the top of this page';
+      };
+      sync(pins.has(id));
+      btn.addEventListener('click', () => {
+        const on = togglePin(id);
+        sync(on);
+        renderShelf();
+        showToast(on ? tool.name + ' pinned' : tool.name + ' unpinned');
+      });
+      cell.appendChild(btn);
+    });
+  }
+
+  /* ---------- install (PWA) ----------
+     Chromium fires beforeinstallprompt; Safari and Firefox never do, so the
+     button only appears where the prompt can actually be shown. */
+  function initInstall() {
+    let deferred = null;
+    const btn = document.querySelector('[data-install]');
+    if (!btn) return;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferred = e;
+      btn.classList.add('show');
+    });
+    btn.addEventListener('click', async () => {
+      if (!deferred) return;
+      deferred.prompt();
+      const { outcome } = await deferred.userChoice;
+      deferred = null;
+      btn.classList.remove('show');
+      if (outcome === 'accepted') showToast('Installed — Nought now works offline');
+    });
+    window.addEventListener('appinstalled', () => btn.classList.remove('show'));
+  }
+
+  function initOffline() {
+    const sync = () => document.documentElement.classList.toggle('is-offline', !navigator.onLine);
+    window.addEventListener('online', sync);
+    window.addEventListener('offline', sync);
+    sync();
+  }
+
+  /* ---------- service worker ----------
+     Registered from the site root so its scope covers every tool directory.
+     file:// and insecure origins have no serviceWorker at all — skip quietly. */
+  function registerSW() {
+    if (!('serviceWorker' in navigator)) return;
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost' &&
+        location.hostname !== '127.0.0.1') return;
+    navigator.serviceWorker.register(ROOT + 'sw.js', { scope: ROOT }).catch(() => {});
   }
 
   /* ---------- exports ---------- */
@@ -478,7 +634,7 @@
     setBusy, initDropZone, initFAQ, loadImageFile, canvasToBlob, drawToCanvas, withExtension,
     encoderSupport, openPalette, svgIcon: svg
   });
-  window.ToolBox = { ROOT, TOOLS, CATEGORIES, ICONS, svg };
+  window.Nought = { ROOT, TOOLS, CATEGORIES, ICONS, svg, getRecent, getPins };
 
   document.addEventListener('DOMContentLoaded', () => {
     buildChrome();
@@ -488,5 +644,14 @@
     initBreadcrumbSchema();
     initRelated();
     initFooter();
+    initShelf();
+    initPins();
+    initInstall();
+    initOffline();
+    registerSW();
+    // #related carries the current tool's id on every tool page — reuse it as
+    // the visit signal rather than repeating the id in a second attribute.
+    const here = document.getElementById('related');
+    if (here && here.dataset.tool) recordVisit(here.dataset.tool);
   });
 })();

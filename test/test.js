@@ -263,4 +263,112 @@ it('jsonStats measures shape', () => {
   assert.equal(s.depth, 5);
 });
 
+/* --- site integrity ---
+   The tool registry in js/main.js drives search, the ⌘K palette, the footer and
+   the related-tools block, but the home page grid, the sitemap and the service
+   worker's precache list are hand-written. Nothing stops those four from
+   drifting apart except this block — so a tool added to one and forgotten in
+   another fails the build instead of quietly 404ing for a real visitor. */
+const fs = require('node:fs');
+const path = require('node:path');
+const ROOT = path.join(__dirname, '..');
+const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
+
+const mainSrc = read('js/main.js');
+const registry = [...mainSrc
+  .slice(mainSrc.indexOf('const TOOLS = ['), mainSrc.indexOf('\n  ];', mainSrc.indexOf('const TOOLS = [')))
+  .matchAll(/\{ id: '([^']+)'.*?name: '([^']+)', url: '([^']+)'/g)]
+  .map(([, id, name, url]) => ({ id, name, url }));
+
+it('the tool registry parses and has 18 tools', () => {
+  assert.equal(registry.length, 18);
+});
+
+it('every registered tool page exists on disk', () => {
+  for (const t of registry) {
+    assert.ok(fs.existsSync(path.join(ROOT, t.url)), 'missing page: ' + t.url);
+  }
+});
+
+const home = read('index.html');
+const cells = [...home.matchAll(/<div class="tool-cell" data-tool="([^"]+)">\s*<a href="([^"]+)"/g)]
+  .map(([, id, href]) => ({ id, href }));
+
+it('the home grid matches the registry exactly', () => {
+  assert.equal(cells.length, registry.length, 'card count differs from the registry');
+  for (const t of registry) {
+    const cell = cells.find((c) => c.id === t.id);
+    assert.ok(cell, 'no card on the home page for: ' + t.id);
+    assert.equal(cell.href, t.url, 'card href drifted for: ' + t.id);
+  }
+});
+
+it('the home grid names match the registry names', () => {
+  for (const t of registry) {
+    assert.ok(home.includes('>' + t.name + '</h3>'), 'card name drifted for: ' + t.id);
+  }
+});
+
+it('the sitemap lists every tool', () => {
+  const sitemap = read('sitemap.xml');
+  for (const t of registry) {
+    const dir = t.url.replace(/index\.html$/, '');
+    assert.ok(sitemap.includes('/' + dir + '<'), 'sitemap is missing: ' + dir);
+  }
+});
+
+it('the service worker precaches every tool page', () => {
+  const sw = read('sw.js');
+  const precache = sw.slice(sw.indexOf('const PRECACHE = ['), sw.indexOf('];', sw.indexOf('const PRECACHE = [')));
+  for (const t of registry) {
+    const dir = t.url.replace(/index\.html$/, '');
+    assert.ok(precache.includes("'" + dir + "'"), 'sw precache is missing: ' + dir);
+  }
+});
+
+const pages = ['index.html', '404.html', 'offline.html']
+  .concat(registry.map((t) => t.url));
+
+it('no page loads anything from a third party', () => {
+  for (const p of pages.concat(['js/main.js', 'js/image-batch.js', 'js/tools-core.js', 'css/style.css'])) {
+    const src = read(p);
+    const hit = src.match(/https?:\/\/(?!schema\.org|www\.w3\.org|www\.sitemaps\.org|example\.com)[^\s"')]+/);
+    assert.ok(!hit, p + ' still reaches out to ' + (hit && hit[0]));
+  }
+});
+
+it('every local file each page references actually exists', () => {
+  for (const p of pages) {
+    const dir = path.dirname(path.join(ROOT, p));
+    const refs = [...read(p).matchAll(/(?:src|href)="((?!https?:|#|mailto:|\.\/")[^"]+)"/g)].map((m) => m[1]);
+    for (const ref of refs) {
+      const clean = ref.split('#')[0].split('?')[0];
+      if (!clean || clean === './') continue;
+      const target = path.resolve(clean.startsWith('/') ? ROOT : dir, clean.replace(/^\//, ''));
+      assert.ok(fs.existsSync(target), p + ' references a missing file: ' + ref);
+    }
+  }
+});
+
+it('the service worker precaches every font and the shell', () => {
+  const sw = read('sw.js');
+  for (const f of ['css/style.css', 'js/main.js', 'js/theme.js', 'offline.html',
+                   'assets/fonts/bricolage.woff2', 'assets/fonts/publicsans.woff2',
+                   'assets/fonts/jetbrainsmono.woff2']) {
+    assert.ok(sw.includes("'" + f + "'"), 'sw precache is missing: ' + f);
+  }
+});
+
+it('the manifest is valid JSON and its icons exist', () => {
+  const manifest = JSON.parse(read('manifest.json'));
+  assert.ok(manifest.icons.length >= 3);
+  assert.ok(manifest.icons.some((i) => i.purpose === 'maskable'), 'no maskable icon');
+  for (const icon of manifest.icons) {
+    assert.ok(fs.existsSync(path.join(ROOT, icon.src)), 'missing icon: ' + icon.src);
+  }
+  for (const s of manifest.shortcuts) {
+    assert.ok(fs.existsSync(path.join(ROOT, s.url, 'index.html')), 'dead shortcut: ' + s.url);
+  }
+});
+
 console.log(pass + ' checks passed' + (process.exitCode ? ' (with failures above)' : ''));

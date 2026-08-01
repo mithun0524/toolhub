@@ -5,7 +5,6 @@
 (function () {
   'use strict';
 
-  const ZIP_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
   let zipPromise = null;
 
   // Loaded on first use only: most visits never click "download all".
@@ -14,7 +13,9 @@
     if (!zipPromise) {
       zipPromise = new Promise((resolve, reject) => {
         const s = document.createElement('script');
-        s.src = ZIP_URL;
+        // Resolved lazily: window.Nought is published by js/main.js, and reading
+        // it at call time keeps this file independent of script order.
+        s.src = ((window.Nought && window.Nought.ROOT) || '') + 'vendor/jszip.min.js';
         s.onload = () => resolve(window.JSZip);
         s.onerror = () => { zipPromise = null; reject(new Error('Could not load the zip library')); };
         document.head.appendChild(s);

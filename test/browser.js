@@ -34,12 +34,12 @@ const PAGES = [
     (async () => {
       const input = document.getElementById('searchInput');
       input.value = 'json'; input.dispatchEvent(new Event('input'));
-      const visible = [...document.querySelectorAll('.tool-card')].filter(c => !c.hidden);
+      const visible = [...document.querySelectorAll('.tool-cell')].filter(c => !c.hidden);
       assert(visible.length === 1, 'search for json should leave 1 card, got ' + visible.length);
       input.value = ''; input.dispatchEvent(new Event('input'));
-      assert([...document.querySelectorAll('.tool-card')].filter(c => !c.hidden).length === 18, '18 cards visible');
+      assert([...document.querySelectorAll('.tool-cell')].filter(c => !c.hidden).length === 18, '18 cards visible');
       document.querySelector('.cat-pill[data-cat="pdf"]').click();
-      assert([...document.querySelectorAll('.tool-card')].filter(c => !c.hidden).length === 2, 'pdf filter shows 2');
+      assert([...document.querySelectorAll('.tool-cell')].filter(c => !c.hidden).length === 2, 'pdf filter shows 2');
       document.querySelector('.cat-pill[data-cat="all"]').click();
       assert(document.querySelectorAll('footer a').length > 15, 'footer links present');
       document.querySelector('.faq-q').click();
@@ -51,10 +51,45 @@ const PAGES = [
       assert(before === 'dark' || before === 'light', 'a theme is stamped before paint');
       document.querySelector('[data-theme-toggle]').click();
       assert(document.documentElement.dataset.theme !== before, 'theme toggle flips the theme');
-      assert(localStorage.getItem('toolbox-theme') === document.documentElement.dataset.theme,
+      assert(localStorage.getItem('nought:theme') === document.documentElement.dataset.theme,
         'choice is persisted');
       document.querySelector('[data-open-palette]').click();
       assert(!document.getElementById('palette').hidden, 'palette opens');
+
+      // pin -> shelf -> unpin, the whole return-visit loop
+      const cell = document.querySelector('.tool-cell[data-tool="dev-json"]');
+      const pin = cell.querySelector('.pin-btn');
+      assert(pin, 'pin button injected onto every card');
+      assert(document.getElementById('shelf').hidden, 'shelf hidden with nothing pinned');
+      pin.click();
+      assert(pin.getAttribute('aria-pressed') === 'true', 'pin reflects pressed state');
+      assert(JSON.parse(localStorage.getItem('nought:pins')).includes('dev-json'), 'pin persisted');
+      assert(!document.getElementById('shelf').hidden, 'shelf appears once something is pinned');
+      assert(document.querySelector('#shelf .shelf-chip.pinned'), 'pinned chip rendered');
+      pin.click();
+      assert(pin.getAttribute('aria-pressed') === 'false', 'unpin flips back');
+      assert(document.getElementById('shelf').hidden, 'shelf hides again when empty');
+
+      // Chrome only fires beforeinstallprompt once the manifest, icons and a
+      // registered service worker all check out — so a visible install button
+      // here is the installability criteria passing, not just markup existing.
+      assert(document.querySelector('[data-install]'), 'install button present in the nav');
+      const reg = await navigator.serviceWorker.getRegistration();
+      assert(reg, 'service worker registered — the site is installable and offline-capable');
+      // Registration alone proves nothing about offline; check the precache filled.
+      await until(async () => (await caches.keys()).includes('nought-v1'), 'precache created');
+      const cache = await caches.open('nought-v1');
+      for (const url of ['css/style.css', 'js/main.js', 'developer/json-formatter/',
+                         'assets/fonts/jetbrainsmono.woff2']) {
+        assert(await cache.match(url), 'not precached, so unavailable offline: ' + url);
+      }
+    })()` },
+
+  { url: '/404.html', needs: ['main'], test: `
+    (async () => {
+      assert(document.querySelector('footer a'), 'footer built on the 404 page');
+      document.querySelector('[data-open-palette]').click();
+      assert(!document.getElementById('palette').hidden, 'palette reachable from a dead URL');
     })()` },
 
   { url: '/image/compress/', needs: ['dropZone', 'qualityRange', 'fileList'], test: `
@@ -470,7 +505,7 @@ class Session {
   if (!pages.length) { console.error('No pages match', filter); process.exit(1); }
 
   const server = await serve();
-  const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'toolbox-chrome-'));
+  const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'nought-chrome-'));
   const debugPort = 9223;
   const chrome = spawn(CHROME, [
     '--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check',

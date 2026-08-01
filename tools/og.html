@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<!-- Source for assets/og.png. Rendered by tools/make-icons.sh at 1200x630. -->
+<html><head><meta charset="utf-8"/><style>
+  @font-face { font-family:'JetBrains Mono'; src:url('../assets/fonts/jetbrainsmono.woff2') format('woff2'); font-weight:400 600; }
+  @font-face { font-family:'Bricolage'; src:url('../assets/fonts/bricolage.woff2') format('woff2'); font-weight:400 800; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:1200px; height:630px; background:#0b0b0c; color:#fafaf9;
+    font-family:'Bricolage', sans-serif; overflow:hidden; position:relative;
+    display:flex; flex-direction:column; justify-content:center; padding:0 88px;
+  }
+  /* hairline instrument grid */
+  body::before {
+    content:''; position:absolute; inset:0;
+    background-image:linear-gradient(#ffffff0a 1px, transparent 1px), linear-gradient(90deg, #ffffff0a 1px, transparent 1px);
+    background-size:48px 48px;
+  }
+  body::after {
+    content:''; position:absolute; width:900px; height:900px; right:-320px; top:-280px; border-radius:50%;
+    background:radial-gradient(circle, #ffb02026 0%, transparent 62%);
+  }
+  .row { display:flex; align-items:center; gap:22px; position:relative; }
+  .mark { width:76px; height:76px; flex:none; }
+  .word { font-family:'JetBrains Mono', monospace; font-size:60px; font-weight:600; letter-spacing:4px; }
+  h1 { font-size:78px; font-weight:800; letter-spacing:-3px; line-height:1.02; margin:44px 0 20px; position:relative; max-width:940px; }
+  h1 em { font-style:normal; color:#ffb020; }
+  p { font-size:29px; color:#a1a1aa; position:relative; font-weight:400; }
+  .chips { display:flex; gap:12px; margin-top:44px; position:relative; }
+  .chip {
+    font-family:'JetBrains Mono', monospace; font-size:20px; letter-spacing:0.5px;
+    border:1px solid #2a2a2e; border-radius:999px; padding:9px 20px; color:#d4d4d8;
+  }
+</style></head><body>
+  <div class="row">
+    <svg class="mark" viewBox="0 0 24 24" fill="none">
+      <ellipse cx="12" cy="12" rx="5.4" ry="7.6" stroke="#ffb020" stroke-width="2.1"/>
+      <path d="M8.4 18.2 15.6 5.8" stroke="#ffb020" stroke-width="2.1" stroke-linecap="round"/>
+    </svg>
+    <span class="word">NOUGHT</span>
+  </div>
+  <h1>18 tools. <em>Nought</em> uploads.</h1>
+  <p>Images, PDFs, text, calculators, code — all of it runs inside your browser.</p>
+  <div class="chips">
+    <span class="chip">0 signup</span>
+    <span class="chip">0 uploads</span>
+    <span class="chip">works offline</span>
+  </div>
+</body></html>
