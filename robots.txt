@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://usenought.vercel.app/sitemap.xml
+Sitemap: https://noughttools.vercel.app/sitemap.xml
