@@ -77,12 +77,27 @@ const PAGES = [
       const reg = await navigator.serviceWorker.getRegistration();
       assert(reg, 'service worker registered — the site is installable and offline-capable');
       // Registration alone proves nothing about offline; check the precache filled.
-      await until(async () => (await caches.keys()).includes('nought-v2'), 'precache created');
-      const cache = await caches.open('nought-v2');
+      await until(async () => (await caches.keys()).includes('nought-v3'), 'precache created');
+      const cache = await caches.open('nought-v3');
       for (const url of ['css/style.css', 'js/main.js', 'developer/json-formatter/',
                          'assets/fonts/jetbrainsmono.woff2']) {
         assert(await cache.match(url), 'not precached, so unavailable offline: ' + url);
       }
+    })()` },
+
+  { url: '/image/compress/to-100kb/', needs: ['sizeTool', 'dropZone', 'result'], test: `
+    (async () => {
+      assert(document.getElementById('sizeTool').dataset.targetKb === '100',
+        'page carries its own target');
+      await drop('fileInput', [file('a.png','image/png')]);
+      await until(() => !document.getElementById('result').hidden, 'result panel opens');
+      await until(() => /→/.test(document.getElementById('resultStats').textContent),
+        'before → after reported');
+      assert(!document.getElementById('saveBtn').disabled, 'download enabled after a result');
+      // The 4x4 test PNG is far under the ceiling, so it must fit without
+      // scaling — a visible scaling note here would mean the search is wrong.
+      assert(document.getElementById('resultNote').hidden,
+        'a tiny image should hit the target without being scaled down');
     })()` },
 
   { url: '/404.html', needs: ['main'], test: `
