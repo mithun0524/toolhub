@@ -307,6 +307,19 @@ it('the home grid matches the registry exactly', () => {
   }
 });
 
+it('every tile has an icon', () => {
+  // The five live tiles originally had no icon, because their running widget was
+  // the visual. Filtering hides the widget, so those tiles rendered blank — and
+  // it only showed up once a category was selected. Every tile carries an icon
+  // now, and this keeps it that way.
+  const tiles = home.match(/<div class="[^"]*tool-cell[^"]*"[\s\S]*?\n    <\/div>/g) || [];
+  assert.equal(tiles.length, registry.length, 'could not parse every tile');
+  for (const tile of tiles) {
+    const id = (tile.match(/data-tool="([^"]+)"/) || [])[1];
+    assert.ok(tile.includes('class="tile-icon"'), 'tile has no icon: ' + id);
+  }
+});
+
 it('the home grid names match the registry names', () => {
   for (const t of registry) {
     assert.ok(home.includes('>' + t.name + '</h3>'), 'card name drifted for: ' + t.id);
