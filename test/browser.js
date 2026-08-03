@@ -77,8 +77,8 @@ const PAGES = [
       const reg = await navigator.serviceWorker.getRegistration();
       assert(reg, 'service worker registered — the site is installable and offline-capable');
       // Registration alone proves nothing about offline; check the precache filled.
-      await until(async () => (await caches.keys()).includes('nought-v3'), 'precache created');
-      const cache = await caches.open('nought-v3');
+      await until(async () => (await caches.keys()).includes('nought-v4'), 'precache created');
+      const cache = await caches.open('nought-v4');
       for (const url of ['css/style.css', 'js/main.js', 'developer/json-formatter/',
                          'assets/fonts/jetbrainsmono.woff2']) {
         assert(await cache.match(url), 'not precached, so unavailable offline: ' + url);
@@ -98,6 +98,20 @@ const PAGES = [
       // scaling — a visible scaling note here would mean the search is wrong.
       assert(document.getElementById('resultNote').hidden,
         'a tiny image should hit the target without being scaled down');
+    })()` },
+
+  { url: '/image/resize/instagram-post/', needs: ['presetTool', 'dropZone', 'result'], test: `
+    (async () => {
+      const t = document.getElementById('presetTool');
+      assert(t.dataset.w === '1080' && t.dataset.h === '1080', 'page carries its own dimensions');
+      await drop('fileInput', [file('a.png','image/png')]);
+      await until(() => !document.getElementById('result').hidden, 'result panel opens');
+      await until(() => /1080\u00d71080/.test(document.getElementById('resultStats').textContent),
+        'reports the exact output dimensions');
+      assert(!document.getElementById('saveBtn').disabled, 'download enabled after a result');
+      // The test PNG is already square, so a centre-crop must trim nothing.
+      assert(document.getElementById('resultNote').hidden,
+        'a square source should not report a crop');
     })()` },
 
   { url: '/404.html', needs: ['main'], test: `

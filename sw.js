@@ -11,7 +11,7 @@
 
    Bump CACHE_VERSION whenever anything in PRECACHE changes, otherwise returning
    visitors keep the old copy until their browser evicts it. */
-const CACHE_VERSION = 'nought-v3';
+const CACHE_VERSION = 'nought-v4';
 const RUNTIME_CACHE = 'nought-runtime-v1';
 
 const PRECACHE = [
@@ -26,6 +26,7 @@ const PRECACHE = [
   'js/image-batch.js',
   'js/home.js',
   'js/target-compress.js',
+  'js/target-resize.js',
   // The home page's QR tile needs this immediately, unlike the tool pages that
   // pull their heavy libraries in on demand.
   'vendor/qrcode.min.js',
@@ -35,8 +36,18 @@ const PRECACHE = [
   'assets/fonts/publicsans.woff2',
   'assets/fonts/jetbrainsmono.woff2',
   'image/compress/', 'image/resize/', 'image/convert/', 'image/bg-remove/',
-  'image/compress/to-20kb/', 'image/compress/to-50kb/',
-  'image/compress/to-100kb/', 'image/compress/to-500kb/',
+  'image/compress/to-20kb/',
+  'image/compress/to-50kb/',
+  'image/compress/to-100kb/',
+  'image/compress/to-200kb/',
+  'image/compress/to-500kb/',
+  'image/compress/to-1mb/',
+  'image/compress/to-2mb/',
+  'image/resize/instagram-post/',
+  'image/resize/instagram-story/',
+  'image/resize/youtube-thumbnail/',
+  'image/resize/linkedin-banner/',
+  'image/resize/passport-photo/',
   'pdf/compress/', 'pdf/merge/',
   'text/word-counter/', 'text/case-converter/', 'text/lorem-ipsum/', 'text/diff/',
   'calculators/emi/', 'calculators/gst/', 'calculators/age/', 'calculators/percentage/',

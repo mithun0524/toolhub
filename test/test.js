@@ -332,17 +332,18 @@ it('the service worker precaches every tool page', () => {
 
 // Size-target landing pages are not registry tools — they are extra doors into
 // one — but they must still exist, resolve, and stay free of third parties.
-const SIZE_PAGES = [20, 50, 100, 500].map((kb) => `image/compress/to-${kb}kb/index.html`);
+const LANDING_PAGES = ["image/compress/to-20kb", "image/compress/to-50kb", "image/compress/to-100kb", "image/compress/to-200kb", "image/compress/to-500kb", "image/compress/to-1mb", "image/compress/to-2mb", "image/resize/instagram-post", "image/resize/instagram-story", "image/resize/youtube-thumbnail", "image/resize/linkedin-banner", "image/resize/passport-photo"]
+  .map((d) => d + '/index.html');
 
 const pages = ['index.html', '404.html', 'offline.html']
   .concat(registry.map((t) => t.url))
-  .concat(SIZE_PAGES);
+  .concat(LANDING_PAGES);
 
-it('every size-target page exists and is in the sitemap and precache', () => {
+it('every generated landing page exists and is in the sitemap and precache', () => {
   const sitemap = read('sitemap.xml');
   const sw = read('sw.js');
-  for (const p of SIZE_PAGES) {
-    assert.ok(fs.existsSync(path.join(ROOT, p)), 'missing generated page: ' + p);
+  for (const p of LANDING_PAGES) {
+    assert.ok(fs.existsSync(path.join(ROOT, p)), 'missing generated landing page: ' + p);
     const dir = p.replace(/index\.html$/, '');
     assert.ok(sitemap.includes('/' + dir + '<'), 'sitemap is missing: ' + dir);
     assert.ok(sw.includes("'" + dir + "'"), 'sw precache is missing: ' + dir);
